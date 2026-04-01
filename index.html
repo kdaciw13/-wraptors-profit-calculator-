@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wraptors | What's My Wrap Cost?</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#09090b;--sf:#111113;--sf2:#18181b;--sf3:#1c1c20;
+      --bdr:#27272a;--bdr2:#3f3f46;
+      --acc:#c9a84c;--acc-d:rgba(201,168,76,.12);--acc-g:rgba(201,168,76,.25);
+      --tx:#fafafa;--tx2:#a1a1aa;--txm:#71717a;
+      --grn:#22c55e;--grn-d:rgba(34,197,94,.1);
+      --r:14px;--rs:10px;
+    }
+    body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;-webkit-font-smoothing:antialiased}
+    .wrap{max-width:860px;margin:0 auto;padding:36px 20px 64px}
+
+    /* ── HEADER ── */
+    .hdr{text-align:center;margin-bottom:36px}
+    .hdr-logo{width:110px;height:110px;border-radius:50%;object-fit:cover;border:2px solid var(--acc-d);margin-bottom:14px}
+    .hdr h1{font-size:clamp(24px,5vw,34px);font-weight:900;letter-spacing:-.4px;margin-bottom:8px}
+    .hdr-sub{font-size:15px;color:var(--tx2);max-width:420px;margin:0 auto 18px;line-height:1.5}
+    .social-row{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap}
+    .social-badge{
+      display:flex;align-items:center;justify-content:center;
+      width:40px;height:40px;border-radius:50%;
+      background:transparent;border:none;
+      text-decoration:none;cursor:pointer;transition:all .2s;
+    }
+    .social-badge svg{border-radius:6px;transition:transform .2s,filter .2s}
+    .social-badge:hover svg{transform:scale(1.1);filter:brightness(1.15)}
+    .social-badge:active svg{transform:scale(1.05)}
+    .g-badge{display:inline-flex;align-items:center;gap:8px;background:var(--sf2);border:1px solid var(--bdr);border-radius:100px;padding:7px 16px;font-size:13px;text-decoration:none;cursor:pointer;transition:all .2s}
+    .g-badge:hover{background:var(--sf3);border-color:var(--bdr2);transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.3)}
+    .g-badge:active{transform:translateY(0)}
+    .g-badge .stars{display:flex;gap:1px}
+    .g-badge .stars svg{width:14px;height:14px}
+    .g-badge .rt{font-weight:700;color:var(--tx)}
+    .g-badge .ct{color:var(--txm)}
+
+    /* ── CARD ── */
+    .card{background:var(--sf);border:1px solid var(--bdr);border-radius:var(--r);padding:28px;margin-bottom:20px}
+    .card.vehicle-card{position:relative;z-index:50}
+    .card-label{display:flex;align-items:center;gap:10px;font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--acc);margin-bottom:24px}
+    .card-label .bar{flex:1;height:1px;background:var(--bdr)}
+
+    /* ── CUSTOM DROPDOWN ── */
+    .v-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    @media(max-width:520px){.v-row{grid-template-columns:1fr}}
+
+    .dd{position:relative}
+    .dd-label{display:block;font-size:11px;font-weight:600;color:var(--txm);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+
+    .dd-trigger{
+      display:flex;align-items:center;gap:10px;
+      width:100%;padding:0 14px;height:46px;
+      background:var(--sf2);border:1px solid var(--bdr);border-radius:var(--rs);
+      color:var(--tx);font-family:inherit;font-size:14px;font-weight:500;
+      cursor:pointer;transition:border-color .2s,box-shadow .2s;
+    }
+    .dd-trigger:hover{border-color:var(--bdr2)}
+    .dd.open .dd-trigger{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-d);border-radius:var(--rs)}
+    .dd-search-ico{width:16px;height:16px;color:var(--txm);flex-shrink:0;transition:color .2s}
+    .dd.open .dd-search-ico{color:var(--acc)}
+    .dd-input{
+      flex:1;border:none;background:transparent;color:var(--tx);
+      font-family:inherit;font-size:14px;font-weight:500;outline:none;
+      padding:0;min-width:0;
+    }
+    .dd-input::placeholder{color:var(--txm)}
+
+    .dd-panel{
+      position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:200;
+      background:var(--sf2);border:1px solid var(--acc);
+      border-radius:var(--rs);
+      max-height:0;overflow:hidden;
+      transition:max-height .3s cubic-bezier(.4,0,.2,1),opacity .2s;
+      opacity:0;
+      box-shadow:0 16px 40px rgba(0,0,0,.6);
+    }
+    .dd.open .dd-panel{max-height:320px;opacity:1;overflow:auto}
+
+    .dd-list{padding:6px}
+    .dd-opt{
+      padding:10px 12px;border-radius:8px;
+      font-size:14px;font-weight:500;color:var(--tx2);
+      cursor:pointer;transition:all .12s;
+      display:flex;align-items:center;justify-content:space-between;
+    }
+    .dd-opt:hover{background:var(--acc-d);color:var(--tx)}
+    .dd-opt.active{background:var(--acc-d);color:var(--acc);font-weight:600}
+    .dd-opt .check-icon{width:16px;height:16px;color:var(--acc);opacity:0}
+    .dd-opt.active .check-icon{opacity:1}
+    .dd-opt.dd-clear{color:var(--txm);font-weight:400;font-size:13px;font-style:italic}
+    .dd-opt.dd-clear:hover{color:var(--tx)}
+    .dd-empty{padding:20px 12px;text-align:center;color:var(--txm);font-size:13px}
+
+    /* ── SERVICE CATEGORY ── */
+    .svc-cat{margin-bottom:12px;border-radius:var(--r);overflow:hidden;border:1px solid var(--bdr);transition:border-color .25s}
+    .svc-cat.open{border-color:rgba(201,168,76,.25)}
+
+    .svc-hdr{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:20px 20px;
+      cursor:pointer;user-select:none;
+      position:relative;overflow:hidden;
+      min-height:80px;
+      transition:all .2s;
+    }
+    .svc-hdr::before{
+      content:'';position:absolute;inset:0;
+      background-size:cover;background-position:center;
+      opacity:.45;transition:opacity .3s,transform .4s;
+      transform:scale(1.02);
+    }
+    .svc-cat:hover .svc-hdr::before{opacity:.55;transform:scale(1.06)}
+    .svc-cat.open .svc-hdr::before{opacity:.5;transform:scale(1.04)}
+    .svc-hdr::after{
+      content:'';position:absolute;inset:0;
+      background:linear-gradient(90deg,rgba(9,9,11,.88) 0%,rgba(9,9,11,.55) 40%,rgba(9,9,11,.2) 100%);
+      pointer-events:none;
+    }
+
+    /* per-category banner images */
+    .svc-cat[data-img="vinyl"] .svc-hdr::before{background-image:url('img-vinyl.png')}
+    .svc-cat[data-img="clear-ppf"] .svc-hdr::before{background-image:url('img-clear-ppf.png')}
+    .svc-cat[data-img="colored-ppf"] .svc-hdr::before{background-image:url('img-colored-ppf.png')}
+    .svc-cat[data-img="tint"] .svc-hdr::before{background-image:url('img-window-tint.png')}
+    .svc-cat[data-img="calipers"] .svc-hdr::before{background-image:url('img-calipers.png')}
+    .svc-cat[data-img="powder"] .svc-hdr::before{background-image:url('img-powder-coat.png')}
+    .svc-cat[data-img="starlight"] .svc-hdr::before{background-image:url('img-starlight.png');opacity:.6}
+    .svc-cat[data-img="starlight"]:hover .svc-hdr::before{opacity:.7}
+    .svc-cat[data-img="starlight"].open .svc-hdr::before{opacity:.65}
+    .svc-cat[data-img="detail"] .svc-hdr::before{background-image:url('img-detailing.png');background-position:center 15%;background-size:120%}
+
+    .svc-hdr .lt{display:flex;align-items:center;gap:14px;position:relative;z-index:1}
+    .svc-icon{display:none}
+    .svc-hdr .nm{font-weight:700;font-size:15px;color:var(--tx);text-shadow:0 1px 4px rgba(0,0,0,.5)}
+    .svc-hdr .desc{font-size:12px;color:var(--tx2);margin-top:1px;text-shadow:0 1px 3px rgba(0,0,0,.5)}
+    .svc-hdr .rt-area{display:flex;align-items:center;gap:6px;position:relative;z-index:1}
+    .svc-hdr .ct-badge{font-size:11px;font-weight:700;color:var(--acc);background:rgba(201,168,76,.2);backdrop-filter:blur(4px);border-radius:100px;padding:3px 10px;display:none}
+    .svc-cat.has-sel .svc-hdr .ct-badge{display:inline-block}
+    .arr{width:18px;height:18px;flex-shrink:0;color:var(--tx2);transition:transform .3s ease;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
+    .svc-cat.open .arr{transform:rotate(180deg)}
+    .svc-body{max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(.4,0,.2,1)}
+    .svc-cat.open .svc-body{max-height:1200px}
+    .svc-inner{padding:6px 8px 12px;background:var(--sf)}
+
+    /* ── SERVICE ITEM ── */
+    .si{display:flex;align-items:center;justify-content:space-between;padding:13px 14px;border-radius:var(--rs);cursor:pointer;transition:background .15s,opacity .2s;gap:10px}
+    .si:hover{background:rgba(201,168,76,.04)}
+    .si.locked{cursor:default;opacity:.5}
+    .si.locked:hover{background:transparent}
+    .si.on{background:var(--acc-d)}
+    .si .lt{display:flex;align-items:center;gap:12px;min-width:0}
+    .chk{width:22px;height:22px;border-radius:6px;border:2px solid var(--bdr2);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s}
+    .si.on .chk{background:var(--acc);border-color:var(--acc)}
+    .chk svg{opacity:0;transition:opacity .15s}
+    .si.on .chk svg{opacity:1}
+    .si .lbl{font-size:14px;font-weight:500}
+    .si .sub{font-size:11px;color:var(--txm);margin-top:1px}
+    .si .pr{font-size:14px;font-weight:700;color:var(--grn);white-space:nowrap}
+    .si .pr.empty{color:var(--txm);font-weight:400;font-size:12px}
+
+    /* ── SUMMARY ── */
+    .summary{background:var(--sf);border:1px solid var(--bdr);border-radius:var(--r);padding:28px;position:sticky;bottom:20px;box-shadow:0 -8px 40px rgba(0,0,0,.5)}
+    .sum-empty{text-align:center;padding:16px;color:var(--txm);font-size:14px}
+    .sum-vehicle{font-size:13px;color:var(--txm);margin-bottom:16px}
+    .sum-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;font-size:14px}
+    .sum-row .l{color:var(--tx2)}.sum-row .v{font-weight:600}
+    .sum-div{height:1px;background:var(--bdr);margin:12px 0}
+    .sum-tax{display:flex;justify-content:space-between;font-size:13px;color:var(--txm);margin-bottom:4px}
+    .sum-total{display:flex;justify-content:space-between;align-items:center;padding-top:14px}
+    .sum-total .l{font-size:16px;font-weight:700}
+    .sum-total .price{font-size:clamp(26px,5vw,34px);font-weight:900;background:linear-gradient(135deg,var(--acc),var(--grn));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+    /* ── FOOTER ── */
+    .ftr{text-align:center;margin-top:28px;padding-top:24px;border-top:1px solid var(--bdr)}
+    .ftr .brand{font-size:13px;font-weight:600;color:var(--txm)}
+    .ftr .brand span{color:var(--acc)}
+    .ftr .note{font-size:11px;color:var(--txm);margin-top:4px;opacity:.6}
+
+    .fi{animation:fi .35s ease forwards}
+    @keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+    .pop{animation:pop .25s ease}
+    @keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.06)}100%{transform:scale(1)}}
+
+    /* scrollbar for dropdown */
+    .dd-panel::-webkit-scrollbar{width:6px}
+    .dd-panel::-webkit-scrollbar-track{background:transparent}
+    .dd-panel::-webkit-scrollbar-thumb{background:var(--bdr2);border-radius:3px}
+    .dd-panel::-webkit-scrollbar-thumb:hover{background:var(--txm)}
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- HEADER -->
+  <div class="hdr fi">
+    <img src="logo.jpg" alt="Wraptors" class="hdr-logo" />
+    <h1>What's My Wrap Cost?</h1>
+    <p class="hdr-sub">Choose your ride, pick your services, and get an instant price estimate</p>
+    <div class="social-row">
+      <a class="social-badge ig" href="https://www.instagram.com/wraptors.calgary/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <defs>
+            <radialGradient id="ig-r" cx="30%" cy="107%" r="150%">
+              <stop offset="0%" stop-color="#fdf497"/>
+              <stop offset="5%" stop-color="#fdf497"/>
+              <stop offset="45%" stop-color="#fd5949"/>
+              <stop offset="60%" stop-color="#d6249f"/>
+              <stop offset="90%" stop-color="#285AEB"/>
+            </radialGradient>
+          </defs>
+          <rect x="1" y="1" width="22" height="22" rx="6" fill="url(#ig-r)"/>
+          <rect x="3" y="3" width="18" height="18" rx="4.5" stroke="#fff" stroke-width="1.5" fill="none"/>
+          <circle cx="12" cy="12" r="4.5" stroke="#fff" stroke-width="1.5" fill="none"/>
+          <circle cx="17.5" cy="6.5" r="1.2" fill="#fff"/>
+        </svg>
+      </a>
+      <a class="g-badge" href="https://www.google.com/search?sca_esv=3087728c2f704245&sxsrf=ANbL-n7__CJvIwrY-bl7jfgxQWEguzCNbQ:1774507560687&si=AL3DRZEsmMGCryMMFSHJ3StBhOdZ2-6yYkXd_doETEE1OR-qOf5J3K4nFkzd7PGMf0K2S7q8MfAB_IE_Wd54vUEphPE9fc6a_yQquurEsjq6WkrxI1Ipgo7czd_L-4RWLcbH34jPMrQiMf1Y9hm08Sb2A_hU5Kr1pnzrmTNYu9RyixRlwYNQ7Jvngk7YE3tD9-X6Uh4vpgcHA-r3BLroNQRlBloIqpqjohGLG8kV6WPjG9Av9Ul4ppA%3D&q=Wraptors+Calgary+%7C+Window+Tint+%7C+Car+Wraps+%7C+PPF+%7C+Coloured+PPF+%7C+Ceramic+Coating+%7C+Detailing+%7C+Reviews&sa=X&ved=2ahUKEwjyhLnm-7yTAxXyKDQIHaarCwsQ0bkNegQIHRAH&biw=527&bih=719&dpr=1.38" target="_blank" rel="noopener noreferrer">
+        <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20H24v8.5h11.3C34 33.3 29.5 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3 0 5.7 1.1 7.8 2.9l6.1-6.1C34 5.1 29.3 3 24 3 12.4 3 3 12.4 3 24s9.4 21 21 21c11 0 20.5-8 20.5-21 0-1.3-.2-2.7-.4-4z"/><path fill="#FF3D00" d="M6.3 14.7l7 5.1C15 16.1 19.2 13 24 13c3 0 5.7 1.1 7.8 2.9l6.1-6.1C34 5.1 29.3 3 24 3 16 3 9.2 7.8 6.3 14.7z"/><path fill="#4CAF50" d="M24 45c5.2 0 9.9-1.8 13.4-4.9l-6.5-5.4C28.9 36.2 26.6 37 24 37c-5.4 0-10-3.6-11.7-8.5l-7 5.4C8.5 40.5 15.7 45 24 45z"/><path fill="#1976D2" d="M43.6 20H24v8.5h11.3c-.8 2.5-2.3 4.5-4.4 5.9l6.5 5.4C42 35.5 46 30 46 24c0-1.3-.2-2.7-.4-4z"/></svg>
+        <div class="stars">
+          <svg viewBox="0 0 20 20" fill="#FBBF24"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg>
+          <svg viewBox="0 0 20 20" fill="#FBBF24"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg>
+          <svg viewBox="0 0 20 20" fill="#FBBF24"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg>
+          <svg viewBox="0 0 20 20" fill="#FBBF24"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg>
+          <svg viewBox="0 0 20 20" fill="#FBBF24"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg>
+        </div>
+        <span class="rt">4.9</span>
+        <span class="ct">250+ Reviews</span>
+      </a>
+      <a class="social-badge fb" href="https://www.facebook.com/p/Wraptors-Calgary-100063572439776/" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+        <svg width="22" height="22" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="12" fill="#1877F2"/>
+          <path d="M16.671 15.469l.547-3.585h-3.44v-2.328c0-.98.48-1.937 2.022-1.937h1.564V4.544s-1.42-.243-2.777-.243c-2.834 0-4.687 1.718-4.687 4.83v2.734H7.078v3.585h2.822V24c.566.089 1.146.135 1.735.135s1.17-.046 1.735-.135v-8.55h2.893z" fill="#fff"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+
+  <!-- VEHICLE -->
+  <div class="card vehicle-card fi" style="animation-delay:.04s">
+    <div class="card-label">Your Vehicle <span class="bar"></span></div>
+    <div class="v-row">
+      <div class="dd" id="dd-make">
+        <span class="dd-label">Make</span>
+        <div class="dd-trigger" onclick="openDD('make')">
+          <svg class="dd-search-ico" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"/></svg>
+          <input type="text" class="dd-input" id="make-input" placeholder="Search make..." autocomplete="off" oninput="onTriggerInput('make')" onfocus="openDD('make')" />
+        </div>
+        <div class="dd-panel" id="make-panel">
+          <div class="dd-list" id="make-list"></div>
+        </div>
+      </div>
+      <div class="dd" id="dd-model">
+        <span class="dd-label">Model</span>
+        <div class="dd-trigger" onclick="openDD('model')">
+          <svg class="dd-search-ico" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"/></svg>
+          <input type="text" class="dd-input" id="model-input" placeholder="Search model..." autocomplete="off" oninput="onTriggerInput('model')" onfocus="openDD('model')" />
+        </div>
+        <div class="dd-panel" id="model-panel">
+          <div class="dd-list" id="model-list"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SERVICES -->
+  <div class="card fi" style="animation-delay:.08s">
+    <div class="card-label">Select Your Services <span class="bar"></span></div>
+    <div id="cats"></div>
+  </div>
+
+  <!-- SUMMARY -->
+  <div class="summary fi" style="animation-delay:.12s">
+    <div class="card-label">Your Estimate <span class="bar"></span></div>
+    <div id="sumBody"><div class="sum-empty">Select a vehicle and services above</div></div>
+  </div>
+
+  <div class="ftr fi" style="animation-delay:.16s">
+    <div class="brand">Built by <a href="https://connectflowsolutions.com/" target="_blank" rel="noopener noreferrer" style="color:var(--acc);text-decoration:none;transition:opacity .2s" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">ConnectFlow Solutions</a></div>
+    <div class="note">Prices are estimates and may vary based on vehicle condition &amp; scope of work. Tax: 8.25%</div>
+  </div>
+</div>
+
+<script>
+// ═══ DATA ═══
+const TAX = 0.0825;
+const checkSVG = '<svg class="check-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.7 5.3a1 1 0 010 1.4l-8 8a1 1 0 01-1.4 0l-4-4a1 1 0 011.4-1.4L8 12.58l7.3-7.3a1 1 0 011.4 0z"/></svg>';
+
+const makes = {
+  'Acura':['TLX','Integra','MDX','RDX','NSX'],
+  'Audi':['A3','A4','A5','A6','A7','A8','Q3','Q5','Q7','Q8','RS3','RS5','RS6','RS7','R8','e-tron GT','TT','S4','S5'],
+  'Bentley':['Continental GT','Flying Spur','Bentayga'],
+  'BMW':['2 Series','3 Series','4 Series','5 Series','7 Series','8 Series','X1','X3','X5','X6','X7','M2','M3','M4','M5','M8','Z4','iX','i4','i7'],
+  'Cadillac':['CT4','CT5','CT5-V Blackwing','Escalade','XT4','XT5','XT6'],
+  'Chevrolet':['Malibu','Cruze','Impala','Equinox','Traverse','Trax','Blazer','Camaro','Corvette','Spark','Sonic','Colorado','Silverado 1500','Silverado 2500HD','Silverado 3500HD','Tahoe','Suburban'],
+  'Dodge':['Charger','Challenger','Durango','Journey','Grand Caravan','Dart','Nitro','Hornet'],
+  'Ferrari':['296 GTB','F8 Tributo','Roma','SF90','812','Purosangue'],
+  'Ford':['Focus','Fusion','Escape','Explorer','Edge','Mustang','Bronco','EcoSport','Flex','Taurus','Fiesta','Ranger','F-150','F-250','F-350','F-450','Raptor','Lightning','GT'],
+  'Genesis':['G70','G80','G90','GV70','GV80'],
+  'GMC':['Sierra 1500','Sierra 2500HD','Sierra 3500HD','AT4','Denali','Terrain','Acadia','Yukon'],
+  'Honda':['Civic','Accord','CR-V','HR-V','Pilot','Fit','Odyssey','Ridgeline','Passport','Insight'],
+  'Hyundai':['Elantra','Sonata','Tucson','Santa Fe','Kona','Venue','Palisade','Accent','Veloster','Ioniq'],
+  'Infiniti':['Q50','Q60','QX50','QX60','QX80','G37','G35','FX35'],
+  'Jaguar':['F-Type','F-PACE','XE','XF','I-PACE','E-PACE'],
+  'Kia':['Forte','Optima','Sorento','Sportage','Soul','Seltos','Telluride','Rio','Stinger','Carnival'],
+  'Lamborghini':['Huracán','Urus','Revuelto'],
+  'Land Rover':['Range Rover','Range Rover Sport','Defender','Discovery','Discovery Sport','Velar'],
+  'Lexus':['IS','ES','LS','RC','LC','NX','RX','GX','LX'],
+  'Maserati':['Ghibli','Quattroporte','Levante','MC20','GranTurismo','Grecale'],
+  'Mazda':['Mazda3','Mazda6','CX-5','CX-9','CX-30','CX-50','MX-5 Miata','Mazda2'],
+  'McLaren':['720S','765LT','Artura','GT'],
+  'Mercedes-Benz':['A-Class','C-Class','E-Class','S-Class','CLA','CLS','GLA','GLC','GLE','GLS','G-Class','AMG GT','EQS','EQE','SL','Maybach'],
+  'Mini':['Cooper','Countryman','Clubman','Paceman'],
+  'Mitsubishi':['Outlander','Eclipse Cross','RVR','Lancer','Mirage'],
+  'Nissan':['Altima','Sentra','Rogue','Murano','Pathfinder','Kicks','Versa','Maxima','Qashqai','Frontier','GT-R','Z','Titan'],
+  'Porsche':['911','718 Cayman','718 Boxster','Cayenne','Macan','Panamera','Taycan'],
+  'RAM':['1500','2500','3500','TRX','Laramie','Limited','Rebel'],
+  'Range Rover':['Sport','Velar','Evoque','Full Size','SVR'],
+  'Rolls-Royce':['Ghost','Wraith','Dawn','Cullinan','Spectre','Phantom'],
+  'Subaru':['Outback','Forester','Crosstrek','Impreza','WRX','Legacy','Ascent','BRZ'],
+  'Tesla':['Model 3','Model Y','Model S','Model X','Cybertruck'],
+  'Toyota':['Camry','Corolla','RAV4','Highlander','Tacoma','4Runner','Prius','C-HR','Venza','Supra','Yaris','Sienna','Land Cruiser','Tundra'],
+  'Volkswagen':['Jetta','Golf','Tiguan','Atlas','Passat','Taos','ID.4','GTI','Arteon'],
+  'Volvo':['XC40','XC60','XC90','S60','S90','V60','V90','C40'],
+};
+
+const exoticMakes = ['Lamborghini','Ferrari','McLaren','Rolls-Royce','Bentley'];
+const premiumMakes = ['BMW','Audi','Mercedes-Benz','Porsche','Tesla','Lexus','Maserati','Jaguar','Land Rover','Cadillac','Genesis','Infiniti','Acura','Range Rover','Volvo','Mini'];
+function tier(mk){ return exoticMakes.includes(mk)?'exotic':premiumMakes.includes(mk)?'premium':'standard'; }
+
+const largeSUV = ['X7','GLS','G-Class','Cayenne','Model X','Cybertruck','LX','Urus','Purosangue','Cullinan','Bentayga','Range Rover','Escalade','Tahoe','Suburban','Land Cruiser','Durango','QX80','Full Size','Yukon','Palisade','Sequoia','Tundra','Silverado','Sierra','F-150','F-250','F-350','F-450','Raptor','Lightning','Titan','1500','2500','3500','TRX'];
+const anySUV = ['X1','X3','X5','X6','X7','iX','Q3','Q5','Q7','Q8','e-tron','GLA','GLC','GLE','GLS','G-Class','Cayenne','Macan','Model Y','Model X','Cybertruck','NX','RX','GX','LX','UX','Levante','Grecale','Urus','Purosangue','Cullinan','Bentayga','F-PACE','I-PACE','E-PACE','Range Rover','Defender','Discovery','Discovery Sport','Velar','Escalade','XT4','XT5','XT6','Durango','Hornet','Bronco','Tahoe','Suburban','Land Cruiser','4Runner','MDX','RDX','QX50','QX60','QX80','GV70','GV80','Equinox','Traverse','Trax','Blazer','CR-V','HR-V','Pilot','Passport','Tucson','Santa Fe','Kona','Venue','Palisade','Sorento','Sportage','Seltos','Telluride','Rogue','Murano','Pathfinder','Kicks','Qashqai','Outlander','Eclipse Cross','RVR','RAV4','Highlander','C-HR','Venza','Tiguan','Atlas','Taos','XC40','XC60','XC90','Countryman','CX-5','CX-9','CX-30','CX-50','Outback','Forester','Crosstrek','Ascent','Escape','Explorer','Edge','EcoSport','Sport','Evoque','SVR','Terrain','Acadia','Yukon','Ridgeline','Colorado','Ranger','Frontier','Tacoma'];
+function vSize(model){
+  for(const k of largeSUV) if(model.includes(k)) return 'lg';
+  for(const k of anySUV) if(model.includes(k)) return 'suv';
+  return 'sed';
+}
+
+const P = {
+  'Full Vinyl Wrap':              {sed:{s:2800,p:3500,e:5500},suv:{s:3500,p:4200,e:6500},lg:{s:4200,p:5000,e:7500}},
+  'Partial Vinyl Wrap':           {sed:{s:800,p:1000,e:1600},suv:{s:1000,p:1200,e:1800},lg:{s:1200,p:1400,e:2200}},
+  'Clear PPF — Full Body':        {sed:{s:4500,p:5500,e:8000},suv:{s:5500,p:6500,e:9500},lg:{s:6500,p:7500,e:11000}},
+  'Clear PPF — Full Front':       {sed:{s:1500,p:1800,e:2800},suv:{s:1800,p:2200,e:3200},lg:{s:2200,p:2600,e:3800}},
+  'Clear PPF — Partial':          {sed:{s:800,p:1000,e:1500},suv:{s:1000,p:1200,e:1800},lg:{s:1200,p:1400,e:2000}},
+  'Colored PPF — Full Body':      {sed:{s:5500,p:6500,e:9500},suv:{s:6500,p:7800,e:11000},lg:{s:7800,p:9000,e:13000}},
+  'Colored PPF — Full Front':     {sed:{s:2200,p:2600,e:3800},suv:{s:2600,p:3000,e:4500},lg:{s:3000,p:3500,e:5200}},
+  'Window Tint — Full Vehicle':   {sed:{s:250,p:350,e:500},suv:{s:350,p:450,e:600},lg:{s:400,p:500,e:700}},
+  'Window Tint — Front Two':      {sed:{s:100,p:120,e:180},suv:{s:100,p:120,e:180},lg:{s:120,p:140,e:200}},
+  'Windshield Tint':              {sed:{s:150,p:200,e:300},suv:{s:200,p:250,e:350},lg:{s:250,p:300,e:400}},
+  'Custom Caliper Paint':         {sed:{s:400,p:500,e:800},suv:{s:450,p:550,e:850},lg:{s:500,p:600,e:900}},
+  'PC — Rims (Set of 4)':         {sed:{s:600,p:800,e:1200},suv:{s:700,p:900,e:1400},lg:{s:800,p:1000,e:1600}},
+  'PC — Calipers (Set of 4)':     {sed:{s:450,p:550,e:850},suv:{s:500,p:600,e:900},lg:{s:550,p:650,e:950}},
+  'PC — Turbo(s)':                {sed:{s:250,p:300,e:500},suv:{s:250,p:300,e:500},lg:{s:275,p:325,e:550}},
+  'PC — Intake Manifold':         {sed:{s:200,p:250,e:400},suv:{s:200,p:250,e:400},lg:{s:225,p:275,e:450}},
+  'PC — Valve Covers':            {sed:{s:175,p:225,e:350},suv:{s:175,p:225,e:350},lg:{s:200,p:250,e:400}},
+  'PC — Sway Bars':               {sed:{s:150,p:175,e:275},suv:{s:150,p:175,e:275},lg:{s:175,p:200,e:300}},
+  'PC — Brackets & Hardware':     {sed:{s:100,p:125,e:200},suv:{s:100,p:125,e:200},lg:{s:120,p:140,e:225}},
+  'PC — Bolts & Fasteners':       {sed:{s:75,p:90,e:150},suv:{s:75,p:90,e:150},lg:{s:85,p:100,e:175}},
+  'PC — Springs (Set of 4)':      {sed:{s:200,p:250,e:400},suv:{s:225,p:275,e:425},lg:{s:250,p:300,e:475}},
+  'Starlight Headliner':          {sed:{s:1200,p:1500,e:2500},suv:{s:1500,p:1800,e:3000},lg:{s:1800,p:2200,e:3500}},
+  'Full Detail':                  {sed:{s:300,p:450,e:800},suv:{s:400,p:550,e:950},lg:{s:500,p:650,e:1100}},
+  'Exterior Detail & Polish':     {sed:{s:175,p:250,e:450},suv:{s:225,p:325,e:550},lg:{s:275,p:400,e:650}},
+  'Interior Detail':              {sed:{s:150,p:200,e:350},suv:{s:200,p:275,e:450},lg:{s:250,p:325,e:500}},
+};
+
+const categories = [
+  {name:'Vinyl Wraps',icon:'🎨',desc:'Full & partial color-change wraps',img:'vinyl',items:[
+    {k:'Full Vinyl Wrap',label:'Full Vehicle Wrap',sub:'Complete color-change vinyl wrap'},
+    {k:'Partial Vinyl Wrap',label:'Partial Wrap',sub:'Hood, roof, mirrors, or accent panels'}]},
+  {name:'Clear Paint Protection Film',icon:'🛡️',desc:'Invisible paint protection',img:'clear-ppf',items:[
+    {k:'Clear PPF — Full Body',label:'Full Body PPF',sub:'Every painted surface protected'},
+    {k:'Clear PPF — Full Front',label:'Full Front PPF',sub:'Hood, fenders, bumper & mirrors'},
+    {k:'Clear PPF — Partial',label:'Partial PPF',sub:'High-impact zones only'}]},
+  {name:'Colored Paint Protection Film',icon:'🎭',desc:'Color-shift protection film',img:'colored-ppf',items:[
+    {k:'Colored PPF — Full Body',label:'Full Body Colored PPF',sub:'Full coverage color PPF'},
+    {k:'Colored PPF — Full Front',label:'Full Front Colored PPF',sub:'Front-end color PPF'}]},
+  {name:'Window Tinting',icon:'🪟',desc:'Premium ceramic window tint',img:'tint',items:[
+    {k:'Window Tint — Full Vehicle',label:'Full Vehicle Tint',sub:'All side & rear windows'},
+    {k:'Window Tint — Front Two',label:'Front Two Windows',sub:'Driver & passenger only'},
+    {k:'Windshield Tint',label:'Windshield Tint',sub:'Ceramic tint on windshield'}]},
+  {name:'Custom Calipers',icon:'🏎️',desc:'Painted calipers in any custom color',img:'calipers',items:[
+    {k:'Custom Caliper Paint',label:'Custom Caliper Paint',sub:'All four calipers — any color'}]},
+  {name:'Powder Coating',icon:'🔥',desc:'Wheels, engine bay, suspension & more',img:'powder',items:[
+    {k:'PC — Rims (Set of 4)',label:'Rims (Set of 4)',sub:'All four wheels — any color'},
+    {k:'PC — Calipers (Set of 4)',label:'Calipers (Set of 4)',sub:'All four brake calipers'},
+    {k:'PC — Turbo(s)',label:'Turbo(s)',sub:'Single or twin turbo housings'},
+    {k:'PC — Intake Manifold',label:'Intake Manifold',sub:'Manifold powder coating'},
+    {k:'PC — Valve Covers',label:'Valve Covers',sub:'Valve cover(s) — any color'},
+    {k:'PC — Sway Bars',label:'Sway Bars',sub:'Front & rear sway bars'},
+    {k:'PC — Brackets & Hardware',label:'Brackets & Hardware',sub:'Mounting brackets & hardware'},
+    {k:'PC — Bolts & Fasteners',label:'Bolts & Fasteners',sub:'Engine bay or chassis bolt set'},
+    {k:'PC — Springs (Set of 4)',label:'Springs (Set of 4)',sub:'Coilover or coil springs'}]},
+  {name:'Starlight Headliner',icon:'✨',desc:'Fiber-optic star ceiling installation',img:'starlight',items:[
+    {k:'Starlight Headliner',label:'Starlight Headliner',sub:'Custom fiber-optic star ceiling'}]},
+  {name:'Detailing',icon:'💎',desc:'Interior, exterior & full detail services',img:'detail',items:[
+    {k:'Full Detail',label:'Full Detail',sub:'Complete interior & exterior detail'},
+    {k:'Exterior Detail & Polish',label:'Exterior Detail & Polish',sub:'Wash, clay bar, polish & sealant'},
+    {k:'Interior Detail',label:'Interior Detail',sub:'Deep clean, leather care & steam'}]},
+];
+
+// ═══ STATE ═══
+let curMake = '', curModel = '';
+let selected = new Set();
+let openDropdown = null;
+
+// ═══ INIT ═══
+document.addEventListener('DOMContentLoaded', () => {
+  buildMakeList();
+  buildModelList();
+  renderCategories();
+});
+
+// close dropdown when clicking outside
+document.addEventListener('click', (e) => {
+  if (openDropdown && !e.target.closest('.dd')) closeAllDD();
+});
+
+// ═══ CUSTOM DROPDOWNS ═══
+function openDD(type) {
+  const id = `dd-${type}`;
+  const el = document.getElementById(id);
+  if (el.classList.contains('open')) return;
+  closeAllDD();
+  el.classList.add('open');
+  openDropdown = type;
+  const input = document.getElementById(`${type}-input`);
+  input.value = '';
+  input.placeholder = type === 'make' ? 'Type to search make...' : 'Type to search model...';
+  if (type === 'make') buildMakeList('');
+  else buildModelList('');
+  setTimeout(() => input.focus(), 30);
+}
+
+function closeAllDD() {
+  document.querySelectorAll('.dd.open').forEach(d => d.classList.remove('open'));
+  openDropdown = null;
+  // restore display values
+  const mi = document.getElementById('make-input');
+  const moi = document.getElementById('model-input');
+  mi.value = curMake || '';
+  mi.placeholder = curMake ? curMake : 'Search make...';
+  moi.value = curModel || '';
+  moi.placeholder = curModel ? curModel : 'Search model...';
+}
+
+function onTriggerInput(type) {
+  const input = document.getElementById(`${type}-input`);
+  const q = input.value;
+  if (!document.getElementById(`dd-${type}`).classList.contains('open')) openDD(type);
+  if (type === 'make') buildMakeList(q);
+  else buildModelList(q);
+}
+
+function buildMakeList(query) {
+  const list = document.getElementById('make-list');
+  const q = (query || '').toLowerCase();
+  let html = `<div class="dd-opt dd-clear" onclick="selectMake('')">Clear selection</div>`;
+  let count = 0;
+  Object.keys(makes).sort().forEach(m => {
+    if (q && !m.toLowerCase().includes(q)) return;
+    html += `<div class="dd-opt${curMake===m?' active':''}" data-val="${m}" onclick="selectMake('${m.replace(/'/g,"\\'")}')">${m}${checkSVG}</div>`;
+    count++;
+  });
+  if (count === 0) html += '<div class="dd-empty">No makes found</div>';
+  list.innerHTML = html;
+}
+
+function buildModelList(query) {
+  const list = document.getElementById('model-list');
+  const q = (query || '').toLowerCase();
+  let models = [];
+  if (curMake && makes[curMake]) {
+    models = makes[curMake].map(m => ({ model: m, make: curMake }));
+  } else {
+    Object.entries(makes).forEach(([mk, ms]) => {
+      ms.forEach(m => models.push({ model: m, make: mk }));
+    });
+    models.sort((a, b) => a.model.localeCompare(b.model));
+  }
+
+  let html = `<div class="dd-opt dd-clear" onclick="selectModel('')">Clear selection</div>`;
+  let count = 0;
+  models.forEach(({ model, make }) => {
+    const text = model + ' ' + make;
+    if (q && !text.toLowerCase().includes(q)) return;
+    const showMake = !curMake ? ` <span style="color:var(--txm);font-weight:400;font-size:12px;margin-left:6px">${make}</span>` : '';
+    html += `<div class="dd-opt${curModel===model?' active':''}" data-val="${model}" onclick="selectModel('${model.replace(/'/g,"\\'")}','${make.replace(/'/g,"\\'")}')">${model}${showMake}${checkSVG}</div>`;
+    count++;
+  });
+  if (count === 0) html += '<div class="dd-empty">No models found</div>';
+  list.innerHTML = html;
+}
+
+function selectMake(val) {
+  curMake = val;
+  if (val && makes[val] && curModel && !makes[val].includes(curModel)) {
+    curModel = '';
+  }
+  closeAllDD();
+  refreshPrices();
+  refreshSummary();
+}
+
+function selectModel(val, fromMake) {
+  curModel = val;
+  if (val && !curMake && fromMake) {
+    curMake = fromMake;
+  }
+  closeAllDD();
+  refreshPrices();
+  refreshSummary();
+}
+
+// ═══ SERVICES ═══
+function renderCategories() {
+  const root = document.getElementById('cats');
+  categories.forEach((cat, ci) => {
+    const el = document.createElement('div');
+    el.className = 'svc-cat';
+    el.id = `cat-${ci}`;
+    if (cat.img) el.dataset.img = cat.img;
+    el.innerHTML = `
+      <div class="svc-hdr" onclick="toggleCat(${ci})">
+        <div class="lt">
+          <div class="svc-icon">${cat.icon}</div>
+          <div><div class="nm">${cat.name}</div><div class="desc">${cat.desc}</div></div>
+        </div>
+        <div class="rt-area">
+          <span class="ct-badge" id="cat-badge-${ci}">0</span>
+          <svg class="arr" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"/></svg>
+        </div>
+      </div>
+      <div class="svc-body"><div class="svc-inner" id="cat-inner-${ci}"></div></div>`;
+    root.appendChild(el);
+    const inner = el.querySelector(`#cat-inner-${ci}`);
+    cat.items.forEach(item => {
+      const row = document.createElement('div');
+      row.className = 'si';
+      row.id = `item-${item.k}`;
+      row.onclick = () => toggleItem(item.k, ci);
+      row.innerHTML = `
+        <div class="lt">
+          <div class="chk"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M11.5 3.5L5.5 10L2.5 7" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div><div class="lbl">${item.label}</div><div class="sub">${item.sub}</div></div>
+        </div>
+        <div class="pr empty" data-k="${item.k}">Select vehicle</div>`;
+      inner.appendChild(row);
+    });
+  });
+}
+
+function toggleCat(ci) {
+  const el = document.getElementById(`cat-${ci}`);
+  const wasOpen = el.classList.contains('open');
+  // close all others first (accordion)
+  document.querySelectorAll('.svc-cat.open').forEach(c => c.classList.remove('open'));
+  // toggle the clicked one
+  if (!wasOpen) el.classList.add('open');
+}
+
+function vehicleReady() { return curMake && curModel; }
+
+function toggleItem(k, ci) {
+  if (!vehicleReady()) return; // block selection if vehicle not fully chosen
+  const el = document.getElementById(`item-${k}`);
+  if (selected.has(k)) { selected.delete(k); el.classList.remove('on'); }
+  else { selected.add(k); el.classList.add('on'); }
+  updateBadge(ci);
+  refreshSummary();
+}
+
+function updateBadge(ci) {
+  const cat = categories[ci];
+  let ct = 0;
+  cat.items.forEach(i => { if (selected.has(i.k)) ct++; });
+  document.getElementById(`cat-badge-${ci}`).textContent = ct;
+  const el = document.getElementById(`cat-${ci}`);
+  ct > 0 ? el.classList.add('has-sel') : el.classList.remove('has-sel');
+}
+
+// ═══ PRICING ═══
+function getPrice(k) {
+  if (!curMake || !curModel) return null;
+  const t = tier(curMake);
+  const s = vSize(curModel);
+  const sKey = s === 'lg' ? 'lg' : s === 'suv' ? 'suv' : 'sed';
+  const d = P[k];
+  if (!d || !d[sKey]) return null;
+  const tKey = t === 'exotic' ? 'e' : t === 'premium' ? 'p' : 's';
+  return d[sKey][tKey] || null;
+}
+
+function fmt(n) { return '$' + Math.abs(n).toLocaleString('en-US'); }
+function fmtC(n) { return '$' + n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+
+function getMissingLabel() {
+  if (!curMake && !curModel) return 'Select make & model';
+  if (!curMake) return 'Select make';
+  if (!curModel) return 'Select model';
+  return null;
+}
+
+function refreshPrices() {
+  const missing = getMissingLabel();
+  document.querySelectorAll('.pr[data-k]').forEach(el => {
+    if (missing) {
+      el.textContent = missing;
+      el.classList.add('empty');
+    } else {
+      const p = getPrice(el.dataset.k);
+      if (p !== null) { el.textContent = fmt(p); el.classList.remove('empty'); el.classList.add('pop'); setTimeout(()=>el.classList.remove('pop'),250); }
+      else { el.textContent = '—'; el.classList.add('empty'); }
+    }
+  });
+  // Lock/unlock service items
+  document.querySelectorAll('.si').forEach(s => {
+    if (missing) s.classList.add('locked');
+    else s.classList.remove('locked');
+  });
+  // Remove checkmarks if vehicle becomes incomplete
+  if (missing && selected.size > 0) {
+    selected.clear();
+    document.querySelectorAll('.si.on').forEach(s => s.classList.remove('on'));
+    categories.forEach((_, ci) => updateBadge(ci));
+    refreshSummary();
+  }
+}
+
+// ═══ SUMMARY ═══
+function refreshSummary() {
+  const box = document.getElementById('sumBody');
+  if (selected.size === 0) { box.innerHTML = '<div class="sum-empty">Select a vehicle and services above</div>'; return; }
+  let rows = '', sub = 0, missing = false;
+  const vTxt = (curMake && curModel) ? `<div class="sum-vehicle">${curMake} ${curModel}</div>` : '';
+  selected.forEach(k => {
+    const p = getPrice(k);
+    const label = findLabel(k);
+    if (p !== null) { sub += p; rows += `<div class="sum-row"><span class="l">${label}</span><span class="v">${fmt(p)}</span></div>`; }
+    else { missing = true; rows += `<div class="sum-row"><span class="l">${label}</span><span class="v" style="color:var(--txm);font-size:12px">Select vehicle</span></div>`; }
+  });
+  const tax = sub * TAX;
+  const total = sub + tax;
+  box.innerHTML = `${vTxt}${rows}
+    <div class="sum-div"></div>
+    <div class="sum-tax"><span>Subtotal</span><span>${missing?'—':fmtC(sub)}</span></div>
+    <div class="sum-tax"><span>Tax (8.25%)</span><span>${missing?'—':fmtC(tax)}</span></div>
+    <div class="sum-total"><span class="l">Estimated Total</span><span class="price">${missing?'—':fmtC(total)}</span></div>`;
+}
+
+function findLabel(k) {
+  for (const c of categories) for (const i of c.items) if (i.k === k) return i.label;
+  return k;
+}
+</script>
+</body>
+</html>
