@@ -12,11 +12,21 @@
       --bdr:#27272a;--bdr2:#3f3f46;
       --acc:#c9a84c;--acc-d:rgba(201,168,76,.12);--acc-g:rgba(201,168,76,.25);
       --tx:#fafafa;--tx2:#a1a1aa;--txm:#71717a;
-      --grn:#22c55e;--grn-d:rgba(34,197,94,.1);
       --r:14px;--rs:10px;
     }
     body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;-webkit-font-smoothing:antialiased}
-    .wrap{max-width:860px;margin:0 auto;padding:36px 20px 64px}
+
+    /* ── LAYOUT ── */
+    .page-wrap{max-width:1280px;margin:0 auto;padding:36px 20px 64px}
+    .top-section{max-width:860px;margin:0 auto}
+    .layout{display:grid;grid-template-columns:1fr 360px;gap:24px;align-items:start}
+    .main-col{}
+    .sidebar-col{position:sticky;top:24px}
+
+    @media(max-width:1024px){
+      .layout{grid-template-columns:1fr;gap:20px}
+      .sidebar-col{position:static}
+    }
 
     /* ── HEADER ── */
     .hdr{text-align:center;margin-bottom:36px}
@@ -145,8 +155,8 @@
     .svc-cat.has-sel .svc-hdr .ct-badge{display:inline-block}
     .arr{width:18px;height:18px;flex-shrink:0;color:var(--tx2);transition:transform .3s ease;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
     .svc-cat.open .arr{transform:rotate(180deg)}
-    .svc-body{max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(.4,0,.2,1)}
-    .svc-cat.open .svc-body{max-height:1200px}
+    .svc-body{max-height:0;overflow:hidden;opacity:0;transform:translateY(-8px);transition:max-height .45s cubic-bezier(.4,0,.2,1),opacity .35s ease,transform .35s ease}
+    .svc-cat.open .svc-body{max-height:1200px;opacity:1;transform:translateY(0)}
     .svc-inner{padding:6px 8px 12px;background:var(--sf)}
 
     /* ── SERVICE ITEM ── */
@@ -160,22 +170,91 @@
     .si.on .chk{background:var(--acc);border-color:var(--acc)}
     .chk svg{opacity:0;transition:opacity .15s}
     .si.on .chk svg{opacity:1}
+    .si .lbl-wrap{display:flex;align-items:center;gap:8px}
     .si .lbl{font-size:14px;font-weight:500}
-    .si .sub{font-size:11px;color:var(--txm);margin-top:1px}
-    .si .pr{font-size:14px;font-weight:700;color:var(--grn);white-space:nowrap}
+    .si .pr{font-size:14px;font-weight:700;color:var(--acc);white-space:nowrap}
     .si .pr.empty{color:var(--txm);font-weight:400;font-size:12px}
 
-    /* ── SUMMARY ── */
-    .summary{background:var(--sf);border:1px solid var(--bdr);border-radius:var(--r);padding:28px;position:sticky;bottom:20px;box-shadow:0 -8px 40px rgba(0,0,0,.5)}
-    .sum-empty{text-align:center;padding:16px;color:var(--txm);font-size:14px}
-    .sum-vehicle{font-size:13px;color:var(--txm);margin-bottom:16px}
-    .sum-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;font-size:14px}
-    .sum-row .l{color:var(--tx2)}.sum-row .v{font-weight:600}
-    .sum-div{height:1px;background:var(--bdr);margin:12px 0}
-    .sum-tax{display:flex;justify-content:space-between;font-size:13px;color:var(--txm);margin-bottom:4px}
-    .sum-total{display:flex;justify-content:space-between;align-items:center;padding-top:14px}
-    .sum-total .l{font-size:16px;font-weight:700}
-    .sum-total .price{font-size:clamp(26px,5vw,34px);font-weight:900;background:linear-gradient(135deg,var(--acc),var(--grn));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    /* ── INFO BUTTON ── */
+    .info-btn{
+      width:22px;height:22px;border-radius:50%;
+      background:rgba(201,168,76,.1);border:1.5px solid var(--acc);
+      color:var(--acc);font-size:12px;font-weight:700;font-style:italic;font-family:Georgia,serif;
+      display:inline-flex;align-items:center;justify-content:center;
+      cursor:pointer;transition:all .2s;flex-shrink:0;
+      line-height:1;
+    }
+    .info-btn:hover{background:var(--acc);border-color:var(--acc);color:#09090b}
+
+    .info-desc{
+      font-size:11px;color:var(--txm);margin-top:0;
+      padding:0;background:none;border-radius:0;
+      border:none;line-height:1.4;font-style:italic;
+      max-height:0;opacity:0;overflow:hidden;
+      transform:translateY(-4px);
+      transition:max-height .35s cubic-bezier(.4,0,.2,1),opacity .3s ease,transform .3s ease,margin-top .3s ease;
+    }
+    .info-desc.show{max-height:120px;opacity:1;transform:translateY(0);margin-top:4px}
+
+    /* Toast notification */
+    .v-toast{
+      position:fixed;top:24px;left:50%;transform:translateX(-50%) translateY(-100px);
+      background:var(--sf2);border:1px solid var(--acc);border-radius:var(--rs);
+      padding:12px 24px;font-size:13px;font-weight:600;color:var(--tx);
+      box-shadow:0 8px 32px rgba(0,0,0,.5);z-index:9999;
+      transition:transform .35s cubic-bezier(.4,0,.2,1);white-space:nowrap;
+    }
+    .v-toast.show{transform:translateX(-50%) translateY(0)}
+
+    /* Mic button */
+    .mic-btn{
+      width:34px;height:34px;border-radius:50%;border:1.5px solid var(--bdr);
+      background:var(--sf2);color:var(--txm);cursor:pointer;
+      display:flex;align-items:center;justify-content:center;
+      flex-shrink:0;transition:all .2s;
+    }
+    .mic-btn:hover{border-color:var(--acc);color:var(--acc)}
+    .mic-btn.listening{border-color:var(--acc);color:var(--acc);animation:mic-pulse 1s ease infinite}
+    @keyframes mic-pulse{0%,100%{box-shadow:0 0 0 0 rgba(201,168,76,.3)}50%{box-shadow:0 0 0 8px rgba(201,168,76,0)}}
+
+    /* Highlight flash for missing field */
+    .dd.highlight .dd-trigger{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-g);animation:dd-flash 0.6s ease 3}
+    .dd.highlight .dd-label{color:var(--acc)}
+    @keyframes dd-flash{0%,100%{box-shadow:0 0 0 3px rgba(201,168,76,.25)}50%{box-shadow:0 0 0 6px rgba(201,168,76,.45)}}
+
+    /* ── ORDER SUMMARY SIDEBAR ── */
+    .order-summary{background:var(--sf);border:1px solid var(--bdr);border-radius:var(--r);padding:24px;box-shadow:0 8px 32px rgba(0,0,0,.4)}
+    .os-title{font-size:18px;font-weight:800;color:var(--tx);margin-bottom:20px}
+    .os-empty{text-align:center;padding:32px 16px;color:var(--txm);font-size:14px}
+    .os-empty-icon{font-size:32px;margin-bottom:10px;opacity:.4}
+
+    .os-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--bdr)}
+    .os-item:last-of-type{border-bottom:none}
+    .os-item-thumb{
+      width:48px;height:48px;border-radius:8px;object-fit:cover;flex-shrink:0;
+      background:var(--sf2);border:1px solid var(--bdr);
+    }
+    .os-item-info{flex:1;min-width:0}
+    .os-item-name{font-size:13px;font-weight:600;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .os-item-vehicle{font-size:11px;color:var(--txm);margin-top:1px}
+    .os-item-price{font-size:14px;font-weight:700;color:var(--acc);white-space:nowrap;flex-shrink:0}
+
+    .os-totals{margin-top:16px;padding-top:12px;border-top:1px solid var(--bdr)}
+    .os-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;font-size:13px;color:var(--tx2)}
+    .os-row .val{font-weight:600;color:var(--tx)}
+    .os-divider{height:1px;background:var(--bdr);margin:10px 0}
+    .os-total-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0}
+    .os-total-row .label{font-size:15px;font-weight:700;color:var(--tx)}
+    .os-total-row .val{font-size:22px;font-weight:900;color:var(--acc)}
+
+    .os-checkout-btn{
+      display:block;width:100%;margin-top:18px;padding:16px;
+      background:linear-gradient(135deg,var(--acc),#d4b45a);border:none;border-radius:var(--rs);
+      color:#09090b;font-family:inherit;font-size:15px;font-weight:700;
+      cursor:pointer;transition:all .2s;letter-spacing:.3px;
+    }
+    .os-checkout-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(201,168,76,.3)}
+    .os-checkout-btn:active{transform:translateY(0)}
 
     /* ── FOOTER ── */
     .ftr{text-align:center;margin-top:28px;padding-top:24px;border-top:1px solid var(--bdr)}
@@ -193,17 +272,6 @@
     .dd-panel::-webkit-scrollbar-track{background:transparent}
     .dd-panel::-webkit-scrollbar-thumb{background:var(--bdr2);border-radius:3px}
     .dd-panel::-webkit-scrollbar-thumb:hover{background:var(--txm)}
-
-    /* ── CHECKOUT BUTTON ── */
-    .checkout-btn{
-      display:none;width:100%;margin-top:18px;padding:16px;
-      background:linear-gradient(135deg,var(--acc),#d4b45a);border:none;border-radius:var(--rs);
-      color:#09090b;font-family:inherit;font-size:15px;font-weight:700;
-      cursor:pointer;transition:all .2s;letter-spacing:.3px;
-    }
-    .checkout-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(201,168,76,.3)}
-    .checkout-btn:active{transform:translateY(0)}
-    .checkout-btn.show{display:block}
 
     /* ── MODAL OVERLAY ── */
     .modal-overlay{
@@ -250,9 +318,9 @@
       transition:all .3s;flex-shrink:0;
     }
     .step-dot.active{background:var(--acc);border-color:var(--acc);color:#09090b}
-    .step-dot.done{background:var(--grn);border-color:var(--grn);color:#fff}
+    .step-dot.done{background:var(--acc);border-color:var(--acc);color:#fff}
     .step-line{flex:1;height:2px;background:var(--bdr);transition:background .3s}
-    .step-line.done{background:var(--grn)}
+    .step-line.done{background:var(--acc)}
 
     /* Step panels */
     .step-panel{display:none}
@@ -277,8 +345,10 @@
     .co-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
     @media(max-width:480px){.co-row{grid-template-columns:1fr}}
     .co-field .error-msg{font-size:11px;color:#ef4444;margin-top:4px;display:none}
-    .co-field.has-error input,.co-field.has-error select{border-color:#ef4444}
+    .co-field.has-error input,.co-field.has-error select,.co-field.has-error textarea{border-color:#ef4444}
     .co-field.has-error .error-msg{display:block}
+    .co-field.highlight input,.co-field.highlight textarea,.co-field.highlight select{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-g);animation:dd-flash 0.6s ease 3}
+    .co-field.highlight label{color:var(--acc)}
 
     /* Review list */
     .review-block{background:var(--sf2);border:1px solid var(--bdr);border-radius:var(--rs);padding:16px;margin-bottom:12px}
@@ -288,6 +358,13 @@
     .review-block .rb-item{display:flex;justify-content:space-between;padding:5px 0;font-size:13px}
     .review-block .rb-item .l{color:var(--tx2)}
     .review-block .rb-item .v{font-weight:600;color:var(--tx)}
+    .rb-svc-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--bdr)}
+    .rb-svc-item:last-child{border-bottom:none}
+    .rb-svc-thumb{width:44px;height:44px;border-radius:8px;object-fit:cover;flex-shrink:0;background:var(--sf);border:1px solid var(--bdr)}
+    .rb-svc-info{flex:1;min-width:0}
+    .rb-svc-name{font-size:13px;font-weight:600;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .rb-svc-qty{font-size:11px;color:var(--txm);margin-top:2px}
+    .rb-svc-price{font-size:14px;font-weight:700;color:var(--acc);white-space:nowrap;flex-shrink:0}
     .review-total{display:flex;justify-content:space-between;align-items:center;padding:16px 0 0;margin-top:8px;border-top:1px solid var(--bdr)}
     .review-total .l{font-size:15px;font-weight:700;color:var(--tx)}
     .review-total .v{font-size:22px;font-weight:900;color:var(--acc)}
@@ -300,8 +377,10 @@
     }
     .pay-opt:hover{border-color:var(--bdr2)}
     .pay-opt.active{border-color:var(--acc);background:var(--acc-d)}
-    .pay-opt .pay-icon{font-size:22px;margin-bottom:4px}
-    .pay-opt .pay-name{font-size:12px;font-weight:600;color:var(--tx2)}
+    .pay-opt .pay-icon{margin-bottom:6px;display:flex;align-items:center;justify-content:center}
+    .pay-opt .pay-icon svg{width:40px;height:26px;fill:var(--tx2);transition:fill .2s}
+    .pay-opt.active .pay-icon svg{fill:var(--acc)}
+    .pay-opt .pay-name{font-size:11px;font-weight:600;color:var(--tx2)}
     .pay-opt.active .pay-name{color:var(--acc)}
 
     /* Card inputs */
@@ -319,34 +398,97 @@
     .btn-next{background:var(--acc);border:none;color:#09090b}
     .btn-next:hover{box-shadow:0 4px 16px rgba(201,168,76,.3)}
     .btn-next:disabled{opacity:.4;cursor:not-allowed;box-shadow:none}
-    .btn-submit{background:var(--grn);border:none;color:#fff}
-    .btn-submit:hover{box-shadow:0 4px 16px rgba(34,197,94,.3)}
+    .btn-submit{background:var(--acc);border:none;color:#09090b}
+    .btn-submit:hover{box-shadow:0 4px 16px rgba(201,168,76,.3)}
 
     /* Confirmation */
     .confirm-check{
-      width:64px;height:64px;border-radius:50%;background:var(--grn-d);
+      width:64px;height:64px;border-radius:50%;background:var(--acc-d);
       display:flex;align-items:center;justify-content:center;margin:0 auto 20px;
     }
-    .confirm-check svg{width:32px;height:32px;color:var(--grn)}
+    .confirm-check svg{width:32px;height:32px;color:var(--acc)}
     .confirm-text{text-align:center}
     .confirm-text h3{font-size:22px;font-weight:800;color:var(--tx);margin-bottom:6px}
     .confirm-text p{font-size:14px;color:var(--tx2);line-height:1.6}
     .confirm-text .ref{font-size:13px;color:var(--acc);font-weight:600;margin-top:12px}
     .confirm-done{
-      display:block;width:100%;margin-top:24px;padding:14px;
+      display:block;width:100%;margin-top:16px;padding:14px;
       background:var(--acc);border:none;border-radius:var(--rs);
       color:#09090b;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;
       transition:all .2s;
     }
     .confirm-done:hover{box-shadow:0 4px 16px rgba(201,168,76,.3)}
 
-    /* ── CUSTOM CALENDAR ── */
-    .cal-wrap{
-      display:none;position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:300;
-      background:var(--sf2);border:1px solid var(--acc);border-radius:var(--rs);
-      padding:16px;box-shadow:0 16px 40px rgba(0,0,0,.6);
+    .cal-section{margin-top:20px;text-align:center}
+    .cal-section .cal-title{font-size:12px;font-weight:600;color:var(--txm);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px}
+    .cal-btns{display:flex;gap:8px;justify-content:center}
+    .cal-btn{
+      display:flex;align-items:center;gap:6px;padding:10px 16px;
+      background:var(--sf2);border:1px solid var(--bdr);border-radius:var(--rs);
+      color:var(--tx);font-family:inherit;font-size:12px;font-weight:600;
+      cursor:pointer;transition:all .2s;text-decoration:none;
     }
-    .cal-wrap.open{display:block;animation:fi .2s ease}
+    .cal-btn:hover{border-color:var(--acc);background:var(--acc-d);color:var(--acc)}
+    .cal-btn svg{width:20px;height:20px;flex-shrink:0;border-radius:4px}
+
+    /* ── APPOINTMENT PICKER DIALOG ── */
+    .appt-overlay{
+      position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.8);
+      backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;
+      opacity:0;pointer-events:none;transition:opacity .3s;padding:20px;
+    }
+    .appt-overlay.open{opacity:1;pointer-events:auto}
+    .appt-dialog{
+      background:var(--sf);border:1px solid var(--bdr);border-radius:var(--r);
+      width:100%;max-width:580px;overflow:hidden;
+      transform:translateY(16px) scale(.97);transition:transform .3s;
+    }
+    .appt-overlay.open .appt-dialog{transform:translateY(0) scale(1)}
+    .appt-header{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:20px 24px;border-bottom:1px solid var(--bdr);
+    }
+    .appt-header h3{font-size:17px;font-weight:700}
+    .appt-body{display:flex;border-bottom:1px solid var(--bdr)}
+    .appt-cal-side{flex:1;padding:20px;border-right:1px solid var(--bdr)}
+    .appt-time-side{width:180px;display:flex;flex-direction:column}
+    .appt-time-title{
+      padding:14px 16px;font-size:13px;font-weight:600;color:var(--tx2);
+      text-align:center;border-bottom:1px solid var(--bdr);
+    }
+    .appt-time-list{flex:1;overflow-y:auto;padding:10px;max-height:320px}
+    .appt-time-list::-webkit-scrollbar{width:4px}
+    .appt-time-list::-webkit-scrollbar-thumb{background:var(--bdr2);border-radius:2px}
+    .time-btn{
+      display:block;width:100%;padding:12px 14px;margin-bottom:8px;
+      background:transparent;border:1.5px solid var(--bdr2);border-radius:100px;
+      color:var(--tx2);font-family:inherit;font-size:13px;font-weight:500;
+      text-align:center;cursor:pointer;transition:all .15s;
+    }
+    .time-btn:hover{border-color:var(--acc);color:var(--tx);background:var(--acc-d)}
+    .time-btn.active{background:var(--acc);border-color:var(--acc);color:#09090b;font-weight:700}
+    .appt-footer{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:16px 24px;gap:16px;
+    }
+    .appt-selection{font-size:13px;color:var(--txm);flex:1}
+    .appt-selection.has-val{color:var(--tx);font-weight:600}
+    .btn-primary-appt{
+      padding:10px 28px;background:var(--acc);border:none;border-radius:var(--rs);
+      color:#09090b;font-family:inherit;font-size:14px;font-weight:700;
+      cursor:pointer;transition:all .2s;
+    }
+    .btn-primary-appt:hover{box-shadow:0 4px 16px rgba(201,168,76,.3)}
+    .btn-primary-appt:disabled{opacity:.3;cursor:not-allowed;box-shadow:none}
+    @media(max-width:520px){
+      .appt-body{flex-direction:column}
+      .appt-cal-side{border-right:none;border-bottom:1px solid var(--bdr)}
+      .appt-time-side{width:100%;max-height:200px}
+      .appt-time-list{max-height:160px;display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+      .time-btn{margin-bottom:0}
+    }
+
+    /* ── CALENDAR (shared styles) ── */
     .cal-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
     .cal-title{font-size:14px;font-weight:700;color:var(--tx)}
     .cal-arrow{
@@ -360,22 +502,23 @@
       text-align:center;font-size:11px;font-weight:600;color:var(--txm);
       text-transform:uppercase;letter-spacing:.5px;padding:4px 0;
     }
-    .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+    .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
     .cal-cell{
-      text-align:center;padding:9px 0;border-radius:8px;font-size:13px;font-weight:500;
+      text-align:center;padding:10px 0;border-radius:50%;font-size:13px;font-weight:500;
       color:var(--tx2);cursor:pointer;transition:all .15s;
+      aspect-ratio:1;display:flex;align-items:center;justify-content:center;
     }
     .cal-cell:hover{background:var(--acc-d);color:var(--tx)}
-    .cal-cell.today{color:var(--acc);font-weight:700}
+    .cal-cell.today{background:var(--sf3);color:var(--tx);font-weight:700}
     .cal-cell.selected{background:var(--acc);color:#09090b;font-weight:700}
-    .cal-cell.disabled{color:var(--bdr2);cursor:default;pointer-events:none}
+    .cal-cell.disabled{color:var(--bdr);cursor:default;pointer-events:none}
     .cal-cell.empty{pointer-events:none}
   </style>
 </head>
 <body>
-<div class="wrap">
+<div class="page-wrap">
 
-  <!-- HEADER -->
+  <!-- HEADER (full width above columns) -->
   <div class="hdr fi">
     <img src="logo.jpg" alt="Wraptors" class="hdr-logo" />
     <h1>What's My Wrap Cost?</h1>
@@ -419,44 +562,100 @@
     </div>
   </div>
 
-  <!-- VEHICLE -->
-  <div class="card vehicle-card fi" style="animation-delay:.04s">
-    <div class="card-label">Your Vehicle <span class="bar"></span></div>
-    <div class="v-row">
-      <div class="dd" id="dd-make">
-        <span class="dd-label">Make</span>
-        <div class="dd-trigger" onclick="openDD('make')">
-          <svg class="dd-search-ico" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"/></svg>
-          <input type="text" class="dd-input" id="make-input" placeholder="Search make..." autocomplete="off" oninput="onTriggerInput('make')" onfocus="openDD('make')" />
+  <!-- VEHICLE (centered, full width) -->
+  <div class="top-section">
+    <div class="card vehicle-card fi" style="animation-delay:.04s">
+      <div class="card-label">Your Vehicle <span class="bar"></span></div>
+      <div class="v-row">
+        <div class="dd" id="dd-make">
+          <span class="dd-label">Make</span>
+          <div style="display:flex;align-items:center;gap:8px">
+            <div class="dd-trigger" onclick="openDD('make')" style="flex:1">
+              <svg class="dd-search-ico" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"/></svg>
+              <input type="text" class="dd-input" id="make-input" placeholder="Type or speak to search make..." autocomplete="off" oninput="onTriggerInput('make')" onfocus="openDD('make')" />
+            </div>
+            <button class="mic-btn" onclick="startVoice('make')" title="Voice search">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="1" width="6" height="11" rx="3"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+            </button>
+          </div>
+          <div class="dd-panel" id="make-panel">
+            <div class="dd-list" id="make-list"></div>
+          </div>
         </div>
-        <div class="dd-panel" id="make-panel">
-          <div class="dd-list" id="make-list"></div>
-        </div>
-      </div>
-      <div class="dd" id="dd-model">
-        <span class="dd-label">Model</span>
-        <div class="dd-trigger" onclick="openDD('model')">
-          <svg class="dd-search-ico" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"/></svg>
-          <input type="text" class="dd-input" id="model-input" placeholder="Search model..." autocomplete="off" oninput="onTriggerInput('model')" onfocus="openDD('model')" />
-        </div>
-        <div class="dd-panel" id="model-panel">
-          <div class="dd-list" id="model-list"></div>
+        <div class="dd" id="dd-model">
+          <span class="dd-label">Model</span>
+          <div style="display:flex;align-items:center;gap:8px">
+            <div class="dd-trigger" onclick="openDD('model')" style="flex:1">
+              <svg class="dd-search-ico" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"/></svg>
+              <input type="text" class="dd-input" id="model-input" placeholder="Type or speak to search model..." autocomplete="off" oninput="onTriggerInput('model')" onfocus="openDD('model')" />
+            </div>
+            <button class="mic-btn" onclick="startVoice('model')" title="Voice search">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="1" width="6" height="11" rx="3"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+            </button>
+          </div>
+          <div class="dd-panel" id="model-panel">
+            <div class="dd-list" id="model-list"></div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- SERVICES -->
-  <div class="card fi" style="animation-delay:.08s">
-    <div class="card-label">Select Your Services <span class="bar"></span></div>
-    <div id="cats"></div>
+  <!-- SERVICES + ORDER SUMMARY (side by side) -->
+  <div class="layout">
+    <div class="main-col">
+      <div class="card fi" style="animation-delay:.08s">
+        <div class="card-label">Select Your Services <span class="bar"></span></div>
+        <div id="cats"></div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN: Order Summary Sidebar -->
+    <div class="sidebar-col fi" style="animation-delay:.12s">
+      <div class="order-summary" id="orderSummary">
+        <div class="os-title">Order summary</div>
+        <div id="osBody">
+          <div class="os-empty">
+            <div class="os-empty-icon">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--txm)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+            </div>
+            Your cart is empty
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 
-  <!-- SUMMARY -->
-  <div class="summary fi" style="animation-delay:.12s">
-    <div class="card-label">Your Estimate <span class="bar"></span></div>
-    <div id="sumBody"><div class="sum-empty">Select a vehicle and services above</div></div>
-    <button class="checkout-btn" id="checkoutBtn" onclick="openCheckout()">Proceed to Booking</button>
+  <!-- APPOINTMENT PICKER DIALOG -->
+  <div class="appt-overlay" id="apptOverlay" onclick="closeApptPicker(event)">
+    <div class="appt-dialog" onclick="event.stopPropagation()">
+      <div class="appt-header">
+        <h3>Book Appointment</h3>
+        <div class="modal-close" onclick="closeApptPicker()">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="4" x2="12" y2="12"/><line x1="12" y1="4" x2="4" y2="12"/></svg>
+        </div>
+      </div>
+      <div class="appt-body">
+        <div class="appt-cal-side">
+          <div class="cal-hdr">
+            <button class="cal-arrow" onclick="calNav(-1)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 2L4 7l5 5"/></svg></button>
+            <span class="cal-title" id="calTitle"></span>
+            <button class="cal-arrow" onclick="calNav(1)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 2l5 5-5 5"/></svg></button>
+          </div>
+          <div class="cal-days" id="calDays"></div>
+          <div class="cal-grid" id="calGrid"></div>
+        </div>
+        <div class="appt-time-side">
+          <div class="appt-time-title">Available Times</div>
+          <div class="appt-time-list" id="apptTimeList"></div>
+        </div>
+      </div>
+      <div class="appt-footer">
+        <div class="appt-selection" id="apptSelection">Select a date and time</div>
+        <button class="btn-primary-appt" id="apptConfirmBtn" disabled onclick="confirmAppt()">Confirm</button>
+      </div>
+    </div>
   </div>
 
   <!-- CHECKOUT MODAL -->
@@ -501,7 +700,7 @@
           </div>
           <div class="co-field" id="f-phone">
             <label>Phone Number</label>
-            <input type="tel" id="co-phone" placeholder="(403) 555-1234" />
+            <input type="tel" id="co-phone" placeholder="(403) 555-1234" oninput="formatPhone(this)" maxlength="14" />
             <div class="error-msg">Required</div>
           </div>
           <div class="co-nav">
@@ -512,41 +711,15 @@
 
         <!-- STEP 2: Schedule -->
         <div class="step-panel" id="panel-2">
-          <div class="co-row">
-            <div class="co-field" id="f-date">
-              <label>Preferred Date</label>
-              <input type="text" id="co-date" readonly placeholder="Select date..." onclick="toggleCal()" style="cursor:pointer" />
-              <div class="error-msg">Select a date</div>
-              <div class="cal-wrap" id="calWrap">
-                <div class="cal-hdr">
-                  <button class="cal-arrow" onclick="calNav(-1)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 2L4 7l5 5"/></svg></button>
-                  <span class="cal-title" id="calTitle"></span>
-                  <button class="cal-arrow" onclick="calNav(1)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 2l5 5-5 5"/></svg></button>
-                </div>
-                <div class="cal-days" id="calDays"></div>
-                <div class="cal-grid" id="calGrid"></div>
-              </div>
-            </div>
-            <div class="co-field" id="f-time">
-              <label>Preferred Time</label>
-              <select id="co-time">
-                <option value="">Select time...</option>
-                <option>9:00 AM</option>
-                <option>10:00 AM</option>
-                <option>11:00 AM</option>
-                <option>12:00 PM</option>
-                <option>1:00 PM</option>
-                <option>2:00 PM</option>
-                <option>3:00 PM</option>
-                <option>4:00 PM</option>
-                <option>5:00 PM</option>
-              </select>
-              <div class="error-msg">Select a time</div>
-            </div>
+          <div class="co-field" id="f-date">
+            <label>Preferred Date & Time</label>
+            <input type="text" id="co-date" readonly placeholder="Select date and time" onclick="openApptPicker()" style="cursor:pointer" />
+            <div class="error-msg">Select a date and time</div>
           </div>
-          <div class="co-field">
-            <label>Additional Notes (optional)</label>
+          <div class="co-field" id="f-notes">
+            <label>Additional Notes</label>
             <textarea id="co-notes" placeholder="Any special requests, color preferences, or details we should know..."></textarea>
+            <div class="error-msg">Please add a note about your appointment</div>
           </div>
           <div class="co-nav">
             <button class="btn-back" onclick="prevStep(2)">Back</button>
@@ -558,15 +731,15 @@
         <div class="step-panel" id="panel-3">
           <div class="pay-methods">
             <div class="pay-opt active" onclick="selectPay(this,'card')">
-              <div class="pay-icon">💳</div>
+              <div class="pay-icon"><svg viewBox="0 0 48 32" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="4" width="46" height="24" rx="4" stroke="currentColor" stroke-width="2" fill="none" style="stroke:var(--tx2)"/><rect x="1" y="10" width="46" height="5" style="fill:var(--tx2);opacity:.3"/><rect x="6" y="20" width="14" height="3" rx="1.5" style="fill:var(--tx2);opacity:.5"/><rect x="24" y="20" width="6" height="3" rx="1.5" style="fill:var(--tx2);opacity:.3"/></svg></div>
               <div class="pay-name">Credit Card</div>
             </div>
             <div class="pay-opt" onclick="selectPay(this,'apple')">
-              <div class="pay-icon">🍎</div>
+              <div class="pay-icon"><svg viewBox="0 0 48 32" xmlns="http://www.w3.org/2000/svg"><path d="M24.2 7.4c1.2-1.5 2-3.5 1.8-5.4-1.8.1-3.9 1.2-5.1 2.6-1.1 1.3-2.1 3.4-1.8 5.3 2 .1 3.9-1 5.1-2.5zm4.5 13c-.1-2.9 2.4-4.3 2.5-4.4-1.4-2-3.5-2.3-4.2-2.3-1.8-.2-3.5 1-4.4 1s-2.3-1-3.8-1c-2 0-3.7 1.1-4.7 2.9-2 3.5-.5 8.6 1.4 11.4 1 1.4 2.1 3 3.6 2.9 1.4-.1 2-1 3.7-1s2.2 1 3.8 1c1.5 0 2.5-1.4 3.5-2.8 1.1-1.6 1.5-3.2 1.6-3.2-.1-.1-3-1.2-3-4.5z"/></svg></div>
               <div class="pay-name">Apple Pay</div>
             </div>
             <div class="pay-opt" onclick="selectPay(this,'paypal')">
-              <div class="pay-icon">🅿️</div>
+              <div class="pay-icon"><svg viewBox="0 0 48 32" xmlns="http://www.w3.org/2000/svg"><path d="M18.5 27.5h-3.2c-.3 0-.5-.2-.4-.5l3.6-22.5c0-.2.3-.4.5-.4h7.8c2.6 0 4.5.5 5.6 1.6 1 1 1.4 2.4 1.1 4.3-.4 2.5-1.5 4.2-3.2 5.3-1.6 1-3.8 1.5-6.3 1.5h-1.6c-.4 0-.7.3-.8.7l-1.2 7.4c-.1.6-.5 1-.9 1.1h-1zm9.3-18.6h-2.2l-1.5 9.2h1c2.2 0 3.8-.4 5-1.2 1.1-.8 1.8-2.1 2.1-3.8.3-1.5 0-2.6-.7-3.2-.7-.7-2-1-3.7-1z"/></svg></div>
               <div class="pay-name">PayPal</div>
             </div>
           </div>
@@ -617,7 +790,11 @@
           <div class="confirm-text">
             <h3>Booking Confirmed!</h3>
             <p>We've received your appointment request. You'll get a confirmation email shortly with all the details.</p>
-            <div class="ref" id="refNum"></div>
+            <div class="ref" id="refNum" style="display:none"></div>
+          </div>
+          <div class="cal-section">
+            <div class="cal-title">Add to Calendar</div>
+            <div class="cal-btns" id="calBtns"></div>
           </div>
           <button class="confirm-done" onclick="closeCheckout(); resetCheckout();">Done</button>
         </div>
@@ -631,6 +808,8 @@
     <div class="note">Prices are estimates and may vary based on vehicle condition &amp; scope of work. Tax: 8.25%</div>
   </div>
 </div>
+
+<div class="v-toast" id="vToast"></div>
 
 <script>
 // ═══ DATA ═══
@@ -658,7 +837,7 @@ const makes = {
   'Jaguar':['F-Type','F-Type R','F-PACE','F-PACE SVR','XE','XF','I-PACE','E-PACE'],
   'Kia':['Forte','Optima','Sorento','Sportage','Soul','Seltos','Telluride','Rio','Stinger','Stinger GT','Carnival','EV6','EV6 GT'],
   'Koenigsegg':['Jesko','Jesko Absolut','Gemera','Regera','Agera RS'],
-  'Lamborghini':['Huracán','Huracán STO','Huracán Tecnica','Huracán Performante','Urus','Urus Performante','Revuelto','Aventador','Aventador SVJ'],
+  'Lamborghini':['Hurac\u00e1n','Hurac\u00e1n STO','Hurac\u00e1n Tecnica','Hurac\u00e1n Performante','Urus','Urus Performante','Revuelto','Aventador','Aventador SVJ'],
   'Land Rover':['Range Rover','Range Rover Sport','Range Rover Sport SVR','Defender','Defender V8','Discovery','Discovery Sport','Velar'],
   'Lexus':['IS','IS 500','ES','LS','RC','RC F','LC','LC 500','NX','RX','RX 500h','GX','LX','LFA'],
   'Lotus':['Emira','Evija','Eletre'],
@@ -697,60 +876,101 @@ function vSize(model){
 const P = {
   'Full Vinyl Wrap':              {sed:{s:2800,p:3500,e:5500},suv:{s:3500,p:4200,e:6500},lg:{s:4200,p:5000,e:7500}},
   'Partial Vinyl Wrap':           {sed:{s:800,p:1000,e:1600},suv:{s:1000,p:1200,e:1800},lg:{s:1200,p:1400,e:2200}},
-  'Clear PPF — Full Body':        {sed:{s:4500,p:5500,e:8000},suv:{s:5500,p:6500,e:9500},lg:{s:6500,p:7500,e:11000}},
-  'Clear PPF — Full Front':       {sed:{s:1500,p:1800,e:2800},suv:{s:1800,p:2200,e:3200},lg:{s:2200,p:2600,e:3800}},
-  'Clear PPF — Partial':          {sed:{s:800,p:1000,e:1500},suv:{s:1000,p:1200,e:1800},lg:{s:1200,p:1400,e:2000}},
-  'Colored PPF — Full Body':      {sed:{s:5500,p:6500,e:9500},suv:{s:6500,p:7800,e:11000},lg:{s:7800,p:9000,e:13000}},
-  'Colored PPF — Full Front':     {sed:{s:2200,p:2600,e:3800},suv:{s:2600,p:3000,e:4500},lg:{s:3000,p:3500,e:5200}},
-  'Window Tint — Full Vehicle':   {sed:{s:250,p:350,e:500},suv:{s:350,p:450,e:600},lg:{s:400,p:500,e:700}},
-  'Window Tint — Front Two':      {sed:{s:100,p:120,e:180},suv:{s:100,p:120,e:180},lg:{s:120,p:140,e:200}},
+  'Clear PPF \u2014 Full Body':        {sed:{s:4500,p:5500,e:8000},suv:{s:5500,p:6500,e:9500},lg:{s:6500,p:7500,e:11000}},
+  'Clear PPF \u2014 Full Front':       {sed:{s:1500,p:1800,e:2800},suv:{s:1800,p:2200,e:3200},lg:{s:2200,p:2600,e:3800}},
+  'Clear PPF \u2014 Partial':          {sed:{s:800,p:1000,e:1500},suv:{s:1000,p:1200,e:1800},lg:{s:1200,p:1400,e:2000}},
+  'Colored PPF \u2014 Full Body':      {sed:{s:5500,p:6500,e:9500},suv:{s:6500,p:7800,e:11000},lg:{s:7800,p:9000,e:13000}},
+  'Colored PPF \u2014 Full Front':     {sed:{s:2200,p:2600,e:3800},suv:{s:2600,p:3000,e:4500},lg:{s:3000,p:3500,e:5200}},
+  'Window Tint \u2014 Full Vehicle':   {sed:{s:250,p:350,e:500},suv:{s:350,p:450,e:600},lg:{s:400,p:500,e:700}},
+  'Window Tint \u2014 Front Two':      {sed:{s:100,p:120,e:180},suv:{s:100,p:120,e:180},lg:{s:120,p:140,e:200}},
   'Windshield Tint':              {sed:{s:150,p:200,e:300},suv:{s:200,p:250,e:350},lg:{s:250,p:300,e:400}},
   'Custom Caliper Paint':         {sed:{s:400,p:500,e:800},suv:{s:450,p:550,e:850},lg:{s:500,p:600,e:900}},
-  'PC — Rims (Set of 4)':         {sed:{s:600,p:800,e:1200},suv:{s:700,p:900,e:1400},lg:{s:800,p:1000,e:1600}},
-  'PC — Calipers (Set of 4)':     {sed:{s:450,p:550,e:850},suv:{s:500,p:600,e:900},lg:{s:550,p:650,e:950}},
-  'PC — Turbo(s)':                {sed:{s:250,p:300,e:500},suv:{s:250,p:300,e:500},lg:{s:275,p:325,e:550}},
-  'PC — Intake Manifold':         {sed:{s:200,p:250,e:400},suv:{s:200,p:250,e:400},lg:{s:225,p:275,e:450}},
-  'PC — Valve Covers':            {sed:{s:175,p:225,e:350},suv:{s:175,p:225,e:350},lg:{s:200,p:250,e:400}},
-  'PC — Sway Bars':               {sed:{s:150,p:175,e:275},suv:{s:150,p:175,e:275},lg:{s:175,p:200,e:300}},
-  'PC — Brackets & Hardware':     {sed:{s:100,p:125,e:200},suv:{s:100,p:125,e:200},lg:{s:120,p:140,e:225}},
-  'PC — Bolts & Fasteners':       {sed:{s:75,p:90,e:150},suv:{s:75,p:90,e:150},lg:{s:85,p:100,e:175}},
-  'PC — Springs (Set of 4)':      {sed:{s:200,p:250,e:400},suv:{s:225,p:275,e:425},lg:{s:250,p:300,e:475}},
+  'PC \u2014 Rims (Set of 4)':         {sed:{s:600,p:800,e:1200},suv:{s:700,p:900,e:1400},lg:{s:800,p:1000,e:1600}},
+  'PC \u2014 Calipers (Set of 4)':     {sed:{s:450,p:550,e:850},suv:{s:500,p:600,e:900},lg:{s:550,p:650,e:950}},
+  'PC \u2014 Turbo(s)':                {sed:{s:250,p:300,e:500},suv:{s:250,p:300,e:500},lg:{s:275,p:325,e:550}},
+  'PC \u2014 Intake Manifold':         {sed:{s:200,p:250,e:400},suv:{s:200,p:250,e:400},lg:{s:225,p:275,e:450}},
+  'PC \u2014 Valve Covers':            {sed:{s:175,p:225,e:350},suv:{s:175,p:225,e:350},lg:{s:200,p:250,e:400}},
+  'PC \u2014 Sway Bars':               {sed:{s:150,p:175,e:275},suv:{s:150,p:175,e:275},lg:{s:175,p:200,e:300}},
+  'PC \u2014 Brackets & Hardware':     {sed:{s:100,p:125,e:200},suv:{s:100,p:125,e:200},lg:{s:120,p:140,e:225}},
+  'PC \u2014 Bolts & Fasteners':       {sed:{s:75,p:90,e:150},suv:{s:75,p:90,e:150},lg:{s:85,p:100,e:175}},
+  'PC \u2014 Springs (Set of 4)':      {sed:{s:200,p:250,e:400},suv:{s:225,p:275,e:425},lg:{s:250,p:300,e:475}},
   'Starlight Headliner':          {sed:{s:1200,p:1500,e:2500},suv:{s:1500,p:1800,e:3000},lg:{s:1800,p:2200,e:3500}},
   'Full Detail':                  {sed:{s:300,p:450,e:800},suv:{s:400,p:550,e:950},lg:{s:500,p:650,e:1100}},
   'Exterior Detail & Polish':     {sed:{s:175,p:250,e:450},suv:{s:225,p:325,e:550},lg:{s:275,p:400,e:650}},
   'Interior Detail':              {sed:{s:150,p:200,e:350},suv:{s:200,p:275,e:450},lg:{s:250,p:325,e:500}},
 };
 
+// ═══ SERVICE IMAGE MAPPING ═══
+function getServiceThumb(k) {
+  if (k.includes('Vinyl'))                       return 'img-vinyl.png';
+  if (k.includes('Clear PPF'))                   return 'img-clear-ppf.png';
+  if (k.includes('Colored PPF'))                 return 'img-colored-ppf.png';
+  if (k.includes('Window Tint') || k.includes('Windshield')) return 'img-window-tint.png';
+  if (k.startsWith('PC'))                        return 'img-powder-coat.png';
+  if (k.includes('Caliper'))                     return 'img-calipers.png';
+  if (k === 'Starlight Headliner')               return 'img-starlight.png';
+  if (k.includes('Detail'))                      return 'img-detailing.png';
+  return 'logo.jpg';
+}
+
+// ═══ SERVICE DESCRIPTIONS (info button) ═══
+const serviceDescriptions = {
+  'Full Vinyl Wrap':'Complete color transformation that protects your original paint underneath',
+  'Partial Vinyl Wrap':'Custom accent panels — hood, roof, mirrors — for a two-tone look',
+  'Clear PPF — Full Body':'Invisible armor over every painted surface — blocks rocks, chips & scratches',
+  'Clear PPF — Full Front':'Shields the most vulnerable areas from road debris and stone chips',
+  'Clear PPF — Partial':'Targeted coverage on high-impact zones like bumper edges and mirrors',
+  'Colored PPF — Full Body':'Color change + paint protection in one premium self-healing film',
+  'Colored PPF — Full Front':'Bold front-end color with built-in paint protection',
+  'Window Tint — Full Vehicle':'Privacy, UV protection & heat rejection on every side and rear window',
+  'Window Tint — Front Two':'Match your rear tint or add privacy to the front doors',
+  'Windshield Tint':'Reduce glare and cabin heat with premium ceramic windshield film',
+  'Custom Caliper Paint':'Make your brakes pop with a custom color finish behind your wheels',
+  'PC — Rims (Set of 4)':'Durable, chip-resistant powder coat finish in any color you want',
+  'PC — Calipers (Set of 4)':'Heat-resistant coating that outlasts regular brake caliper paint',
+  'PC — Turbo(s)':'Show-quality finish for your turbo housing — heat resistant up to 1000°F',
+  'PC — Intake Manifold':'Clean, durable coating that resists corrosion and looks incredible',
+  'PC — Valve Covers':'Engine bay detail that stands out — any color, any finish',
+  'PC — Sway Bars':'Corrosion-resistant finish that keeps your suspension looking fresh',
+  'PC — Brackets & Hardware':'Color-matched finish for all your mounting brackets and hardware',
+  'PC — Bolts & Fasteners':'Complete the engine bay look with color-matched bolt sets',
+  'PC — Springs (Set of 4)':'Coated springs that resist rust and give a clean, finished look',
+  'Starlight Headliner':'Rolls-Royce inspired fiber-optic star ceiling — custom installed in any vehicle',
+  'Full Detail':'Complete restoration — interior steam clean, exterior paint correction & sealant',
+  'Exterior Detail & Polish':'Clay bar, paint correction, machine polish & long-lasting ceramic sealant',
+  'Interior Detail':'Deep clean, leather conditioning, steam sanitization & odor removal',
+};
+
 const categories = [
-  {name:'Vinyl Wraps',icon:'🎨',desc:'Full & partial color-change wraps',img:'vinyl',items:[
+  {name:'Vinyl Wraps',icon:'\ud83c\udfa8',desc:'Full & partial color-change wraps',img:'vinyl',items:[
     {k:'Full Vinyl Wrap',label:'Full Vehicle Wrap',sub:'Complete color-change vinyl wrap'},
     {k:'Partial Vinyl Wrap',label:'Partial Wrap',sub:'Hood, roof, mirrors, or accent panels'}]},
-  {name:'Clear Paint Protection Film',icon:'🛡️',desc:'Invisible paint protection',img:'clear-ppf',items:[
-    {k:'Clear PPF — Full Body',label:'Full Body PPF',sub:'Every painted surface protected'},
-    {k:'Clear PPF — Full Front',label:'Full Front PPF',sub:'Hood, fenders, bumper & mirrors'},
-    {k:'Clear PPF — Partial',label:'Partial PPF',sub:'High-impact zones only'}]},
-  {name:'Colored Paint Protection Film',icon:'🎭',desc:'Color-shift protection film',img:'colored-ppf',items:[
-    {k:'Colored PPF — Full Body',label:'Full Body Colored PPF',sub:'Full coverage color PPF'},
-    {k:'Colored PPF — Full Front',label:'Full Front Colored PPF',sub:'Front-end color PPF'}]},
-  {name:'Window Tinting',icon:'🪟',desc:'Premium ceramic window tint',img:'tint',items:[
-    {k:'Window Tint — Full Vehicle',label:'Full Vehicle Tint',sub:'All side & rear windows'},
-    {k:'Window Tint — Front Two',label:'Front Two Windows',sub:'Driver & passenger only'},
+  {name:'Clear Paint Protection Film',icon:'\ud83d\udee1\ufe0f',desc:'Invisible paint protection',img:'clear-ppf',items:[
+    {k:'Clear PPF \u2014 Full Body',label:'Full Body PPF',sub:'Every painted surface protected'},
+    {k:'Clear PPF \u2014 Full Front',label:'Full Front PPF',sub:'Hood, fenders, bumper & mirrors'},
+    {k:'Clear PPF \u2014 Partial',label:'Partial PPF',sub:'High-impact zones only'}]},
+  {name:'Colored Paint Protection Film',icon:'\ud83c\udfad',desc:'Color-shift protection film',img:'colored-ppf',items:[
+    {k:'Colored PPF \u2014 Full Body',label:'Full Body Colored PPF',sub:'Full coverage color PPF'},
+    {k:'Colored PPF \u2014 Full Front',label:'Full Front Colored PPF',sub:'Front-end color PPF'}]},
+  {name:'Window Tinting',icon:'\ud83e\ude9f',desc:'Premium ceramic window tint',img:'tint',items:[
+    {k:'Window Tint \u2014 Full Vehicle',label:'Full Vehicle Tint',sub:'All side & rear windows'},
+    {k:'Window Tint \u2014 Front Two',label:'Front Two Windows',sub:'Driver & passenger only'},
     {k:'Windshield Tint',label:'Windshield Tint',sub:'Ceramic tint on windshield'}]},
-  {name:'Custom Calipers',icon:'🏎️',desc:'Painted calipers in any custom color',img:'calipers',items:[
-    {k:'Custom Caliper Paint',label:'Custom Caliper Paint',sub:'All four calipers — any color'}]},
-  {name:'Powder Coating',icon:'🔥',desc:'Wheels, engine bay, suspension & more',img:'powder',items:[
-    {k:'PC — Rims (Set of 4)',label:'Rims (Set of 4)',sub:'All four wheels — any color'},
-    {k:'PC — Calipers (Set of 4)',label:'Calipers (Set of 4)',sub:'All four brake calipers'},
-    {k:'PC — Turbo(s)',label:'Turbo(s)',sub:'Single or twin turbo housings'},
-    {k:'PC — Intake Manifold',label:'Intake Manifold',sub:'Manifold powder coating'},
-    {k:'PC — Valve Covers',label:'Valve Covers',sub:'Valve cover(s) — any color'},
-    {k:'PC — Sway Bars',label:'Sway Bars',sub:'Front & rear sway bars'},
-    {k:'PC — Brackets & Hardware',label:'Brackets & Hardware',sub:'Mounting brackets & hardware'},
-    {k:'PC — Bolts & Fasteners',label:'Bolts & Fasteners',sub:'Engine bay or chassis bolt set'},
-    {k:'PC — Springs (Set of 4)',label:'Springs (Set of 4)',sub:'Coilover or coil springs'}]},
-  {name:'Starlight Headliner',icon:'✨',desc:'Fiber-optic star ceiling installation',img:'starlight',items:[
+  {name:'Custom Calipers',icon:'\ud83c\udfce\ufe0f',desc:'Painted calipers in any custom color',img:'calipers',items:[
+    {k:'Custom Caliper Paint',label:'Custom Caliper Paint',sub:'All four calipers \u2014 any color'}]},
+  {name:'Powder Coating',icon:'\ud83d\udd25',desc:'Wheels, engine bay, suspension & more',img:'powder',items:[
+    {k:'PC \u2014 Rims (Set of 4)',label:'Rims (Set of 4)',sub:'All four wheels \u2014 any color'},
+    {k:'PC \u2014 Calipers (Set of 4)',label:'Calipers (Set of 4)',sub:'All four brake calipers'},
+    {k:'PC \u2014 Turbo(s)',label:'Turbo(s)',sub:'Single or twin turbo housings'},
+    {k:'PC \u2014 Intake Manifold',label:'Intake Manifold',sub:'Manifold powder coating'},
+    {k:'PC \u2014 Valve Covers',label:'Valve Covers',sub:'Valve cover(s) \u2014 any color'},
+    {k:'PC \u2014 Sway Bars',label:'Sway Bars',sub:'Front & rear sway bars'},
+    {k:'PC \u2014 Brackets & Hardware',label:'Brackets & Hardware',sub:'Mounting brackets & hardware'},
+    {k:'PC \u2014 Bolts & Fasteners',label:'Bolts & Fasteners',sub:'Engine bay or chassis bolt set'},
+    {k:'PC \u2014 Springs (Set of 4)',label:'Springs (Set of 4)',sub:'Coilover or coil springs'}]},
+  {name:'Starlight Headliner',icon:'\u2728',desc:'Fiber-optic star ceiling installation',img:'starlight',items:[
     {k:'Starlight Headliner',label:'Starlight Headliner',sub:'Custom fiber-optic star ceiling'}]},
-  {name:'Detailing',icon:'💎',desc:'Interior, exterior & full detail services',img:'detail',items:[
+  {name:'Detailing',icon:'\ud83d\udc8e',desc:'Interior, exterior & full detail services',img:'detail',items:[
     {k:'Full Detail',label:'Full Detail',sub:'Complete interior & exterior detail'},
     {k:'Exterior Detail & Polish',label:'Exterior Detail & Polish',sub:'Wash, clay bar, polish & sealant'},
     {k:'Interior Detail',label:'Interior Detail',sub:'Deep clean, leather care & steam'}]},
@@ -761,11 +981,99 @@ let curMake = '', curModel = '';
 let selected = new Set();
 let openDropdown = null;
 
+function saveState() {
+  const checkoutOpen = document.getElementById('checkoutModal').classList.contains('open');
+  const formData = {};
+  ['co-fname','co-lname','co-email','co-phone','co-notes'].forEach(id => {
+    formData[id] = document.getElementById(id).value;
+  });
+  const dateEl = document.getElementById('co-date');
+  formData['co-date'] = dateEl.value;
+  formData['co-date-iso'] = dateEl.dataset.iso || '';
+  formData['co-date-time'] = dateEl.dataset.time || '';
+
+  sessionStorage.setItem('wrp_state', JSON.stringify({
+    make: curMake,
+    model: curModel,
+    selected: [...selected],
+    checkoutOpen: checkoutOpen,
+    coStep: coStep,
+    formData: formData,
+    payMethod: payMethod
+  }));
+}
+
+function restoreState() {
+  const raw = sessionStorage.getItem('wrp_state');
+  if (!raw) return;
+  try {
+    const s = JSON.parse(raw);
+    // If checkout wasn't open, don't restore — start fresh
+    if (!s.checkoutOpen) {
+      sessionStorage.removeItem('wrp_state');
+      return;
+    }
+    if (s.make) curMake = s.make;
+    if (s.model) curModel = s.model;
+    if (s.selected && s.selected.length) {
+      s.selected.forEach(k => selected.add(k));
+      selected.forEach(k => {
+        const el = document.getElementById(`item-${k}`);
+        if (el) el.classList.add('on');
+      });
+      categories.forEach((cat, ci) => {
+        let ct = 0;
+        cat.items.forEach(i => { if (selected.has(i.k)) ct++; });
+        document.getElementById(`cat-badge-${ci}`).textContent = ct;
+        const catEl = document.getElementById(`cat-${ci}`);
+        ct > 0 ? catEl.classList.add('has-sel') : catEl.classList.remove('has-sel');
+      });
+    }
+    // Restore input display values
+    const mi = document.getElementById('make-input');
+    const moi = document.getElementById('model-input');
+    mi.value = curMake || '';
+    mi.placeholder = curMake || 'Type or speak to search make...';
+    moi.value = curModel || '';
+    moi.placeholder = curModel || 'Type or speak to search model...';
+    refreshPrices();
+    refreshSummary();
+    // Restore form data
+    if (s.formData) {
+      ['co-fname','co-lname','co-email','co-phone','co-notes'].forEach(id => {
+        if (s.formData[id]) document.getElementById(id).value = s.formData[id];
+      });
+      const dateEl = document.getElementById('co-date');
+      if (s.formData['co-date']) dateEl.value = s.formData['co-date'];
+      if (s.formData['co-date-iso']) dateEl.dataset.iso = s.formData['co-date-iso'];
+      if (s.formData['co-date-time']) dateEl.dataset.time = s.formData['co-date-time'];
+    }
+    // Restore payment method
+    if (s.payMethod) {
+      payMethod = s.payMethod;
+      document.querySelectorAll('.pay-opt').forEach(o => o.classList.remove('active'));
+      const payBtns = document.querySelectorAll('.pay-opt');
+      const payMap = { card: 0, apple: 1, paypal: 2 };
+      if (payBtns[payMap[payMethod]]) payBtns[payMap[payMethod]].classList.add('active');
+      const cf = document.getElementById('cardFields');
+      payMethod === 'card' ? cf.classList.add('show') : cf.classList.remove('show');
+    }
+    // Reopen checkout at the same step
+    if (s.coStep) {
+      coStep = s.coStep;
+      document.getElementById('checkoutModal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+      showStep(coStep);
+    }
+  } catch(e) {}
+}
+
 // ═══ INIT ═══
 document.addEventListener('DOMContentLoaded', () => {
   buildMakeList();
   buildModelList();
   renderCategories();
+  restoreState();
 });
 
 // close dropdown when clicking outside
@@ -783,22 +1091,25 @@ function openDD(type) {
   openDropdown = type;
   const input = document.getElementById(`${type}-input`);
   input.value = '';
-  input.placeholder = type === 'make' ? 'Type to search make...' : 'Type to search model...';
+  input.placeholder = type === 'make' ? 'Type or speak to search make...' : 'Type or speak to search model...';
   if (type === 'make') buildMakeList('');
   else buildModelList('');
   setTimeout(() => input.focus(), 30);
 }
 
+let voiceTextMake = '';
+let voiceTextModel = '';
+
 function closeAllDD() {
   document.querySelectorAll('.dd.open').forEach(d => d.classList.remove('open'));
   openDropdown = null;
-  // restore display values
+  // restore display values — keep voice text if no selection
   const mi = document.getElementById('make-input');
   const moi = document.getElementById('model-input');
-  mi.value = curMake || '';
-  mi.placeholder = curMake ? curMake : 'Search make...';
-  moi.value = curModel || '';
-  moi.placeholder = curModel ? curModel : 'Search model...';
+  mi.value = curMake || voiceTextMake || '';
+  mi.placeholder = curMake ? curMake : 'Type or speak to search make...';
+  moi.value = curModel || voiceTextModel || '';
+  moi.placeholder = curModel ? curModel : 'Type or speak to search model...';
 }
 
 function onTriggerInput(type) {
@@ -807,6 +1118,74 @@ function onTriggerInput(type) {
   if (!document.getElementById(`dd-${type}`).classList.contains('open')) openDD(type);
   if (type === 'make') buildMakeList(q);
   else buildModelList(q);
+}
+
+// ═══ VOICE SEARCH ═══
+let activeRecognition = null;
+function startVoice(type) {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { showToast('Voice search not supported in this browser'); return; }
+  if (activeRecognition) { activeRecognition.abort(); activeRecognition = null; }
+
+  const btn = document.querySelector(`#dd-${type}`).closest('.dd').querySelector('.mic-btn');
+  const rec = new SR();
+  rec.lang = 'en-US';
+  rec.interimResults = false;
+  rec.maxAlternatives = 1;
+  activeRecognition = rec;
+  btn.classList.add('listening');
+
+  rec.onresult = (e) => {
+    const spoken = e.results[0][0].transcript.trim();
+    const spokenLower = spoken.toLowerCase().replace(/[-]/g, ' ');
+
+    if (type === 'make') {
+      // Try to find an exact or close match and auto-select
+      const match = Object.keys(makes).find(m =>
+        m.toLowerCase() === spokenLower ||
+        m.toLowerCase().replace(/[-]/g, ' ') === spokenLower
+      );
+      if (match) {
+        selectMake(match);
+        voiceTextMake = '';
+        return;
+      }
+      // Partial match — show filtered list
+      voiceTextMake = spoken;
+      const input = document.getElementById(`${type}-input`);
+      input.value = spoken;
+      openDD(type);
+      input.value = spoken;
+      buildMakeList(spoken);
+    } else {
+      // Try to find exact model match
+      let allModels = [];
+      if (curMake && makes[curMake]) {
+        allModels = makes[curMake].map(m => ({ model: m, make: curMake }));
+      } else {
+        Object.entries(makes).forEach(([mk, ms]) => ms.forEach(m => allModels.push({ model: m, make: mk })));
+      }
+      const match = allModels.find(m =>
+        m.model.toLowerCase() === spokenLower ||
+        m.model.toLowerCase().replace(/[-]/g, ' ') === spokenLower
+      );
+      if (match) {
+        selectModel(match.model, match.make);
+        voiceTextModel = '';
+        return;
+      }
+      // Partial match — show filtered list
+      voiceTextModel = spoken;
+      const input = document.getElementById(`${type}-input`);
+      input.value = spoken;
+      openDD(type);
+      input.value = spoken;
+      buildModelList(spoken);
+    }
+  };
+  rec.onend = () => { btn.classList.remove('listening'); activeRecognition = null; };
+  rec.onerror = () => { btn.classList.remove('listening'); activeRecognition = null; };
+  rec.start();
 }
 
 function buildMakeList(query) {
@@ -851,22 +1230,26 @@ function buildModelList(query) {
 
 function selectMake(val) {
   curMake = val;
+  voiceTextMake = '';
   if (val && makes[val] && curModel && !makes[val].includes(curModel)) {
     curModel = '';
   }
   closeAllDD();
   refreshPrices();
   refreshSummary();
+  saveState();
 }
 
 function selectModel(val, fromMake) {
   curModel = val;
+  voiceTextModel = '';
   if (val && !curMake && fromMake) {
     curMake = fromMake;
   }
   closeAllDD();
   refreshPrices();
   refreshSummary();
+  saveState();
 }
 
 // ═══ SERVICES ═══
@@ -895,16 +1278,34 @@ function renderCategories() {
       const row = document.createElement('div');
       row.className = 'si';
       row.id = `item-${item.k}`;
-      row.onclick = () => toggleItem(item.k, ci);
+      row.onclick = (e) => {
+        // Don't toggle if clicking the info button
+        if (e.target.closest('.info-btn')) return;
+        toggleItem(item.k, ci);
+      };
+      const desc = serviceDescriptions[item.k] || '';
+      const infoId = 'info-' + item.k.replace(/[^a-zA-Z0-9]/g, '_');
       row.innerHTML = `
         <div class="lt">
           <div class="chk"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M11.5 3.5L5.5 10L2.5 7" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-          <div><div class="lbl">${item.label}</div><div class="sub">${item.sub}</div></div>
+          <div>
+            <div class="lbl-wrap">
+              <span class="lbl">${item.label}</span>
+              <span class="info-btn" onclick="toggleInfo(event, '${infoId}')" title="More info">i</span>
+            </div>
+            <div class="info-desc" id="${infoId}">${desc}</div>
+          </div>
         </div>
         <div class="pr empty" data-k="${item.k}">Select vehicle</div>`;
       inner.appendChild(row);
     });
   });
+}
+
+function toggleInfo(e, id) {
+  e.stopPropagation();
+  const el = document.getElementById(id);
+  el.classList.toggle('show');
 }
 
 function toggleCat(ci) {
@@ -918,13 +1319,39 @@ function toggleCat(ci) {
 
 function vehicleReady() { return curMake && curModel; }
 
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('vToast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function highlightDD(type) {
+  const dd = document.getElementById(`dd-${type}`);
+  dd.classList.remove('highlight');
+  void dd.offsetWidth; // force reflow to restart animation
+  dd.classList.add('highlight');
+  dd.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  setTimeout(() => dd.classList.remove('highlight'), 2000);
+}
+
 function toggleItem(k, ci) {
-  if (!vehicleReady()) return; // block selection if vehicle not fully chosen
+  if (!vehicleReady()) {
+    const msg = getMissingLabel();
+    if (msg) showToast(msg + ' first');
+    if (!curMake && !curModel) { highlightDD('make'); setTimeout(() => highlightDD('model'), 200); }
+    else if (!curMake) highlightDD('make');
+    else if (!curModel) highlightDD('model');
+    return;
+  }
   const el = document.getElementById(`item-${k}`);
   if (selected.has(k)) { selected.delete(k); el.classList.remove('on'); }
   else { selected.add(k); el.classList.add('on'); }
   updateBadge(ci);
   refreshSummary();
+  saveState();
 }
 
 function updateBadge(ci) {
@@ -952,9 +1379,9 @@ function fmt(n) { return '$' + Math.abs(n).toLocaleString('en-US'); }
 function fmtC(n) { return '$' + n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
 
 function getMissingLabel() {
-  if (!curMake && !curModel) return 'Select make & model';
-  if (!curMake) return 'Select make';
-  if (!curModel) return 'Select model';
+  if (!curMake && !curModel) return 'Select your make and model';
+  if (!curMake) return 'Select your make';
+  if (!curModel) return 'Select your model';
   return null;
 }
 
@@ -967,7 +1394,7 @@ function refreshPrices() {
     } else {
       const p = getPrice(el.dataset.k);
       if (p !== null) { el.textContent = fmt(p); el.classList.remove('empty'); el.classList.add('pop'); setTimeout(()=>el.classList.remove('pop'),250); }
-      else { el.textContent = '—'; el.classList.add('empty'); }
+      else { el.textContent = '\u2014'; el.classList.add('empty'); }
     }
   });
   // Lock/unlock service items
@@ -984,32 +1411,58 @@ function refreshPrices() {
   }
 }
 
-// ═══ SUMMARY ═══
+// ═══ ORDER SUMMARY ═══
 function refreshSummary() {
-  const box = document.getElementById('sumBody');
-  const coBtn = document.getElementById('checkoutBtn');
+  const box = document.getElementById('osBody');
+  const vehicleText = (curMake && curModel) ? `${curMake} ${curModel}` : '';
+
   if (selected.size === 0) {
-    box.innerHTML = '<div class="sum-empty">Select a vehicle and services above</div>';
-    coBtn.classList.remove('show');
+    box.innerHTML = `
+      <div class="os-empty">
+        <div class="os-empty-icon">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--txm)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+        </div>
+        Your cart is empty
+      </div>`;
     return;
   }
-  let rows = '', sub = 0, missing = false;
-  const vTxt = (curMake && curModel) ? `<div class="sum-vehicle">${curMake} ${curModel}</div>` : '';
+
+  let itemsHtml = '';
+  let sub = 0;
+  let missing = false;
+
   selected.forEach(k => {
     const p = getPrice(k);
     const label = findLabel(k);
-    if (p !== null) { sub += p; rows += `<div class="sum-row"><span class="l">${label}</span><span class="v">${fmt(p)}</span></div>`; }
-    else { missing = true; rows += `<div class="sum-row"><span class="l">${label}</span><span class="v" style="color:var(--txm);font-size:12px">Select vehicle</span></div>`; }
+    const thumb = getServiceThumb(k);
+    const priceStr = p !== null ? fmt(p) : '\u2014';
+    if (p !== null) sub += p;
+    else missing = true;
+
+    itemsHtml += `
+      <div class="os-item">
+        <img class="os-item-thumb" src="${thumb}" alt="" onerror="this.style.display='none'" />
+        <div class="os-item-info">
+          <div class="os-item-name">${label}</div>
+          <div class="os-item-vehicle">${vehicleText || 'No vehicle selected'}</div>
+        </div>
+        <div class="os-item-price">${priceStr}</div>
+      </div>`;
   });
+
   const tax = sub * TAX;
   const total = sub + tax;
-  box.innerHTML = `${vTxt}${rows}
-    <div class="sum-div"></div>
-    <div class="sum-tax"><span>Subtotal</span><span>${missing?'—':fmtC(sub)}</span></div>
-    <div class="sum-tax"><span>Tax (8.25%)</span><span>${missing?'—':fmtC(tax)}</span></div>
-    <div class="sum-total"><span class="l">Estimated Total</span><span class="price">${missing?'—':fmtC(total)}</span></div>`;
-  // Show checkout button only when everything is ready
-  (!missing && selected.size > 0) ? coBtn.classList.add('show') : coBtn.classList.remove('show');
+  const canCheckout = !missing && selected.size > 0 && vehicleReady();
+
+  box.innerHTML = `
+    ${itemsHtml}
+    <div class="os-totals">
+      <div class="os-row"><span>Subtotal</span><span class="val">${missing ? '\u2014' : fmtC(sub)}</span></div>
+      <div class="os-row"><span>Tax (8.25%)</span><span class="val">${missing ? '\u2014' : fmtC(tax)}</span></div>
+      <div class="os-divider"></div>
+      <div class="os-total-row"><span class="label">Total (incl. Tax)</span><span class="val">${missing ? '\u2014' : fmtC(total)}</span></div>
+    </div>
+    ${canCheckout ? '<button class="os-checkout-btn" onclick="openCheckout()">Continue to Payment</button>' : ''}`;
 }
 
 function findLabel(k) {
@@ -1030,11 +1483,13 @@ function openCheckout() {
   // set min date to today
   const d = document.getElementById('co-date');
   d.min = new Date().toISOString().split('T')[0];
+  saveState();
 }
 
 function closeCheckout() {
   document.getElementById('checkoutModal').classList.remove('open');
   document.body.style.overflow = '';
+  sessionStorage.removeItem('wrp_state');
 }
 
 function showStep(n) {
@@ -1073,9 +1528,20 @@ function nextStep(from) {
   }
   if (from === 2) {
     let valid = true;
-    ['f-date','f-time'].forEach(clearError);
-    if (!document.getElementById('co-date').value || !document.getElementById('co-date').dataset.iso) { setError('f-date'); valid = false; }
-    if (!document.getElementById('co-time').value) { setError('f-time'); valid = false; }
+    clearError('f-date');
+    clearError('f-notes');
+    const dateInput = document.getElementById('co-date');
+    if (!dateInput.value || !dateInput.dataset.iso || !dateInput.dataset.time) { setError('f-date'); valid = false; }
+    if (!document.getElementById('co-notes').value.trim()) {
+      setError('f-notes');
+      const notesField = document.getElementById('f-notes');
+      notesField.classList.remove('highlight');
+      void notesField.offsetWidth;
+      notesField.classList.add('highlight');
+      notesField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setTimeout(() => notesField.classList.remove('highlight'), 2000);
+      valid = false;
+    }
     if (!valid) return;
   }
   if (from === 3) {
@@ -1092,11 +1558,13 @@ function nextStep(from) {
   }
   coStep = from + 1;
   showStep(coStep);
+  saveState();
 }
 
 function prevStep(from) {
   coStep = from - 1;
   showStep(coStep);
+  saveState();
 }
 
 function selectPay(el, method) {
@@ -1105,6 +1573,13 @@ function selectPay(el, method) {
   el.classList.add('active');
   const cf = document.getElementById('cardFields');
   method === 'card' ? cf.classList.add('show') : cf.classList.remove('show');
+}
+
+function formatPhone(el) {
+  let v = el.value.replace(/\D/g,'').substring(0,10);
+  if (v.length >= 7) el.value = '(' + v.substring(0,3) + ') ' + v.substring(3,6) + '-' + v.substring(6);
+  else if (v.length >= 4) el.value = '(' + v.substring(0,3) + ') ' + v.substring(3);
+  else if (v.length >= 1) el.value = '(' + v;
 }
 
 function formatCard(el) {
@@ -1124,13 +1599,21 @@ function buildReview() {
   selected.forEach(k => {
     const p = getPrice(k);
     const label = findLabel(k);
-    if (p) { sub += p; itemsHtml += `<div class="rb-item"><span class="l">${label}</span><span class="v">${fmt(p)}</span></div>`; }
+    const thumb = getServiceThumb(k);
+    if (p) { sub += p; itemsHtml += `
+      <div class="rb-svc-item">
+        <img class="rb-svc-thumb" src="${thumb}" alt="" onerror="this.style.display='none'" />
+        <div class="rb-svc-info">
+          <div class="rb-svc-name">${label}</div>
+          <div class="rb-svc-qty">x1</div>
+        </div>
+        <div class="rb-svc-price">${fmt(p)}</div>
+      </div>`; }
   });
   const tax = sub * TAX;
   const total = sub + tax;
   const dateInput = document.getElementById('co-date');
   const dateDisplay = dateInput.value;
-  const timeVal = document.getElementById('co-time').value;
   const payLabels = {card:'Credit Card',apple:'Apple Pay',paypal:'PayPal'};
 
   document.getElementById('reviewContent').innerHTML = `
@@ -1145,7 +1628,11 @@ function buildReview() {
     </div>
     <div class="review-block">
       <div class="rb-label">Appointment</div>
-      <div class="rb-val">${dateDisplay} at ${timeVal}</div>
+      <div class="rb-val">${dateDisplay}</div>
+    </div>
+    <div class="review-block">
+      <div class="rb-label">Notes</div>
+      <div style="font-size:13px;color:var(--tx2);margin-top:2px;line-height:1.5">${document.getElementById('co-notes').value.trim()}</div>
     </div>
     <div class="review-block">
       <div class="rb-label">Services</div>
@@ -1181,19 +1668,85 @@ function submitOrder() {
     dot.innerHTML = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M11.5 3.5L5.5 10L2.5 7" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
     if (i < 4) document.getElementById(`sl-${i}`).classList.add('done');
   }
+  // Build calendar links
+  buildCalendarLinks();
 }
 
-// ═══ CUSTOM CALENDAR ═══
-let calMonth, calYear, calSelected = null;
+function buildCalendarLinks() {
+  const dateInput = document.getElementById('co-date');
+  const iso = dateInput.dataset.iso; // e.g. "2026-04-15"
+  const timeStr = dateInput.dataset.time; // e.g. "9:00 AM"
 
-function toggleCal() {
-  const wrap = document.getElementById('calWrap');
-  if (wrap.classList.contains('open')) { wrap.classList.remove('open'); return; }
+  // Parse time
+  const [timePart, ampm] = timeStr.split(' ');
+  let [hours, mins] = timePart.split(':').map(Number);
+  if (ampm === 'PM' && hours !== 12) hours += 12;
+  if (ampm === 'AM' && hours === 12) hours = 0;
+
+  const startDate = new Date(`${iso}T${String(hours).padStart(2,'0')}:${String(mins).padStart(2,'0')}:00`);
+  const endDate = new Date(startDate.getTime() + 2 * 60 * 60 * 1000); // 2hr appointment
+
+  const serviceList = [];
+  selected.forEach(k => serviceList.push(findLabel(k)));
+  const title = 'Wraptors Appointment';
+  const desc = `Services: ${serviceList.join(', ')}\\nVehicle: ${curMake} ${curModel}\\nNotes: ${document.getElementById('co-notes').value.trim()}`;
+  const location = 'Wraptors';
+
+  // Format for Google Calendar (YYYYMMDDTHHmmss)
+  const pad = (d) => d.toISOString().replace(/[-:]/g,'').replace(/\.\d{3}/,'');
+  const gStart = pad(startDate);
+  const gEnd = pad(endDate);
+  const googleUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${gStart}/${gEnd}&details=${encodeURIComponent(desc.replace(/\\n/g,'\n'))}&location=${encodeURIComponent(location)}`;
+
+  // Format for Outlook
+  const outlookUrl = `https://outlook.live.com/calendar/0/action/compose?subject=${encodeURIComponent(title)}&startdt=${startDate.toISOString()}&enddt=${endDate.toISOString()}&body=${encodeURIComponent(desc.replace(/\\n/g,'\n'))}&location=${encodeURIComponent(location)}`;
+
+  // iCal (.ics file)
+  const icsStart = gStart;
+  const icsEnd = gEnd;
+  const icsContent = [
+    'BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Wraptors//EN','BEGIN:VEVENT',
+    `DTSTART:${icsStart}`,`DTEND:${icsEnd}`,
+    `SUMMARY:${title}`,`DESCRIPTION:${desc.replace(/\\n/g,'\\n')}`,
+    `LOCATION:${location}`,'END:VEVENT','END:VCALENDAR'
+  ].join('\r\n');
+  const icsBlob = new Blob([icsContent], { type: 'text/calendar' });
+  const icsUrl = URL.createObjectURL(icsBlob);
+
+  document.getElementById('calBtns').innerHTML = `
+    <a class="cal-btn" href="${googleUrl}" target="_blank" rel="noopener">
+      <svg viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg"><path d="M195.368 60.632h30.606L130.026 0 34.026 60.632h30.606" fill="#EA4335"/><path d="M130.026 256l65.342-60.632H64.632L130.026 256" fill="#34A853"/><path d="M64.632 195.368V60.632L0 130.026l64.632 65.342" fill="#4285F4"/><path d="M225.974 195.368L256 130.026l-30.026-69.394h-30.606v134.736h30.606" fill="#FBBC04"/><rect x="64.632" y="60.632" width="130.736" height="134.736" fill="#fff"/><path d="M108.2 144.2c0 3.8-1.1 7-3.4 9.6-2.6 2.8-6 4.2-10.2 4.2-4 0-7.4-1.4-10-4-2.6-2.6-4-6-4-10h5.6c0 2.6.8 4.6 2.4 6.2 1.6 1.6 3.6 2.4 6 2.4 2.6 0 4.6-.8 6.2-2.6 1.6-1.8 2.4-4 2.4-6.8 0-2.6-.8-4.8-2.4-6.4-1.6-1.6-3.6-2.4-6.2-2.4H92v-5.2h2.6c2.2 0 4.2-.8 5.6-2.2 1.4-1.4 2.2-3.4 2.2-5.8 0-2.2-.6-4-2-5.4-1.4-1.4-3.2-2.2-5.4-2.2-2.2 0-4 .8-5.4 2.2-1.4 1.4-2 3.2-2.2 5.4h-5.6c.2-3.6 1.4-6.6 3.8-9 2.4-2.4 5.6-3.6 9.4-3.6 4 0 7.2 1.2 9.4 3.6 2.4 2.4 3.6 5.4 3.6 8.8 0 4.6-2 7.8-5.8 9.8 4.4 1.8 6.6 5.6 6.6 11.2zm27-30.8h-14v-5l14.4-20.6h5v20.4H145v5.2h-4.4v9.6H135v-9.6zm0-5.2V92.4l-10.6 15.8h10.6z" fill="#4285F4"/></svg>
+      Google
+    </a>
+    <a class="cal-btn" href="${outlookUrl}" target="_blank" rel="noopener">
+      <svg viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg"><path d="M256 137.6v-19.2l-96 54.4-96-54.4v19.2l96 54.4 96-54.4" fill="#0364B8"/><path d="M104 128V32l-104 32v160l104 32V128" fill="#0078D4"/><path d="M104 32l152 32v128l-152 32V32" fill="#28A8EA"/><path d="M104 32v224L0 224V64l104-32" fill="#0078D4"/><ellipse cx="52" cy="144" rx="28" ry="36" fill="none" stroke="#fff" stroke-width="7"/></svg>
+      Outlook
+    </a>
+    <a class="cal-btn" href="${icsUrl}" download="wraptors-appointment.ics">
+      <svg viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="acg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FF5E6C"/><stop offset="100%" stop-color="#FF2D55"/></linearGradient></defs><rect width="256" height="256" rx="56" fill="url(#acg)"/><rect x="32" y="76" width="192" height="148" rx="16" fill="#fff"/><rect x="32" y="32" width="192" height="64" rx="16" fill="#fff" opacity=".9"/><rect x="72" y="20" width="8" height="36" rx="4" fill="#fff"/><rect x="176" y="20" width="8" height="36" rx="4" fill="#fff"/><text x="128" y="184" text-anchor="middle" font-family="SF Pro Display,Helvetica,Arial,sans-serif" font-size="80" font-weight="700" fill="#FF2D55">${new Date(iso).getDate()}</text></svg>
+      iCal
+    </a>`;
+}
+
+// ═══ APPOINTMENT PICKER (Calendar + Time) ═══
+let calMonth, calYear, calSelected = null;
+let apptTime = null;
+const availableTimes = ['9:00 AM','9:30 AM','10:00 AM','10:30 AM','11:00 AM','11:30 AM','1:00 PM','1:30 PM','2:00 PM','2:30 PM','3:00 PM','3:30 PM','4:00 PM','4:30 PM'];
+
+function openApptPicker() {
   const now = new Date();
   calMonth = now.getMonth();
   calYear = now.getFullYear();
+  apptTime = null;
   renderCal();
-  wrap.classList.add('open');
+  renderTimes();
+  updateApptFooter();
+  document.getElementById('apptOverlay').classList.add('open');
+}
+
+function closeApptPicker(e) {
+  if (e && e.target && e.target !== document.getElementById('apptOverlay')) return;
+  document.getElementById('apptOverlay').classList.remove('open');
 }
 
 function calNav(dir) {
@@ -1207,11 +1760,9 @@ function renderCal() {
   const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
   document.getElementById('calTitle').textContent = months[calMonth] + ' ' + calYear;
 
-  // Day headers
   const daysEl = document.getElementById('calDays');
   daysEl.innerHTML = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d => `<span>${d}</span>`).join('');
 
-  // Build grid
   const grid = document.getElementById('calGrid');
   const first = new Date(calYear, calMonth, 1).getDay();
   const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
@@ -1219,7 +1770,11 @@ function renderCal() {
   today.setHours(0,0,0,0);
 
   let html = '';
-  for (let i = 0; i < first; i++) html += '<div class="cal-cell empty"></div>';
+  const prevMonthDays = new Date(calYear, calMonth, 0).getDate();
+  for (let i = 0; i < first; i++) {
+    const d = prevMonthDays - first + 1 + i;
+    html += `<div class="cal-cell disabled" style="opacity:.3">${d}</div>`;
+  }
   for (let d = 1; d <= daysInMonth; d++) {
     const date = new Date(calYear, calMonth, d);
     date.setHours(0,0,0,0);
@@ -1238,33 +1793,67 @@ function renderCal() {
 function pickDate(y, m, d) {
   calSelected = new Date(y, m, d);
   calSelected.setHours(0,0,0,0);
-  const input = document.getElementById('co-date');
-  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-  input.value = `${days[calSelected.getDay()]}, ${months[m]} ${d}, ${y}`;
-  input.dataset.iso = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
   renderCal();
-  setTimeout(() => document.getElementById('calWrap').classList.remove('open'), 150);
-  clearError('f-date');
+  updateApptFooter();
 }
 
-// Close calendar on outside click
-document.addEventListener('click', (e) => {
-  if (!e.target.closest('#f-date')) {
-    const w = document.getElementById('calWrap');
-    if (w) w.classList.remove('open');
+function renderTimes() {
+  const list = document.getElementById('apptTimeList');
+  list.innerHTML = availableTimes.map(t =>
+    `<button class="time-btn${apptTime===t?' active':''}" onclick="pickTime('${t}')">${t}</button>`
+  ).join('');
+}
+
+function pickTime(t) {
+  apptTime = t;
+  renderTimes();
+  updateApptFooter();
+}
+
+function updateApptFooter() {
+  const sel = document.getElementById('apptSelection');
+  const btn = document.getElementById('apptConfirmBtn');
+  if (calSelected && apptTime) {
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    const d = calSelected;
+    sel.textContent = `${days[d.getDay()]}, ${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()} at ${apptTime}`;
+    sel.classList.add('has-val');
+    btn.disabled = false;
+  } else if (calSelected) {
+    sel.textContent = 'Now select a time';
+    sel.classList.remove('has-val');
+    btn.disabled = true;
+  } else {
+    sel.textContent = 'Select a date and time';
+    sel.classList.remove('has-val');
+    btn.disabled = true;
   }
-});
+}
+
+function confirmAppt() {
+  if (!calSelected || !apptTime) return;
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const d = calSelected;
+  const input = document.getElementById('co-date');
+  input.value = `${days[d.getDay()]}, ${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()} at ${apptTime}`;
+  input.dataset.iso = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  input.dataset.time = apptTime;
+  clearError('f-date');
+  closeApptPicker();
+}
 
 function resetCheckout() {
-  ['co-fname','co-lname','co-email','co-phone','co-date','co-notes','co-cardname','co-cardnum','co-exp','co-cvc'].forEach(id => { const el = document.getElementById(id); el.value = ''; if (el.dataset.iso) delete el.dataset.iso; });
+  ['co-fname','co-lname','co-email','co-phone','co-date','co-notes','co-cardname','co-cardnum','co-exp','co-cvc'].forEach(id => { const el = document.getElementById(id); el.value = ''; if (el.dataset) { delete el.dataset.iso; delete el.dataset.time; } });
   calSelected = null;
-  document.getElementById('co-time').selectedIndex = 0;
-  ['f-fname','f-lname','f-email','f-phone','f-date','f-time','f-cardname','f-cardnum','f-exp','f-cvc'].forEach(clearError);
+  apptTime = null;
+  ['f-fname','f-lname','f-email','f-phone','f-date','f-notes','f-cardname','f-cardnum','f-exp','f-cvc'].forEach(clearError);
   payMethod = 'card';
   document.querySelectorAll('.pay-opt').forEach((o,i) => i===0 ? o.classList.add('active') : o.classList.remove('active'));
   document.getElementById('cardFields').classList.add('show');
   coStep = 1;
+  sessionStorage.removeItem('wrp_state');
 }
 </script>
 </body>
