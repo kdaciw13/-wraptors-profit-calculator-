@@ -646,9 +646,16 @@
     }
     .sr-card.active{position:relative;opacity:1;transform:translateY(0)}
     .sr-card.exiting{opacity:0;transform:translateY(-12px)}
-    .sr-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+    .sr-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+    .sr-avatar{
+      width:28px;height:28px;border-radius:50%;flex-shrink:0;
+      display:flex;align-items:center;justify-content:center;
+      font-size:12px;font-weight:700;color:#fff;
+    }
+    .sr-info{flex:1;min-width:0}
     .sr-name{font-size:12px;font-weight:700;color:var(--tx)}
-    .sr-card-stars{display:flex;gap:1px}
+    .sr-badge{font-size:10px;color:var(--txm);font-weight:400}
+    .sr-card-stars{display:flex;gap:1px;flex-shrink:0}
     .sr-text{font-size:12px;color:var(--tx2);line-height:1.5;margin:0;font-style:italic}
   </style>
 </head>
@@ -793,16 +800,44 @@
         </div>
         <div class="sr-carousel" id="srCarousel">
           <div class="sr-card active">
-            <div class="sr-top"><span class="sr-name">Jordan M.</span><div class="sr-card-stars"><svg viewBox="0 0 20 20" fill="#FBBF24" width="11" height="11"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg><svg viewBox="0 0 20 20" fill="#FBBF24" width="11" height="11"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg><svg viewBox="0 0 20 20" fill="#FBBF24" width="11" height="11"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg><svg viewBox="0 0 20 20" fill="#FBBF24" width="11" height="11"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg><svg viewBox="0 0 20 20" fill="#FBBF24" width="11" height="11"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg></div></div>
-            <p class="sr-text">"Got my Tesla wrapped in satin black — absolutely flawless work. Worth every penny."</p>
+            <div class="sr-top">
+              <div class="sr-avatar" style="background:#4285F4">B</div>
+              <div class="sr-info"><div class="sr-name">Baguerra</div><div class="sr-badge">Local Guide</div></div>
+              <div class="sr-card-stars"><svg viewBox="0 0 20 20" fill="#FBBF24" width="11" height="11"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg><svg viewBox="0 0 20 20" fill="#FBBF24" width="11" height="11"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg><svg viewBox="0 0 20 20" fill="#FBBF24" width="11" height="11"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg><svg viewBox="0 0 20 20" fill="#FBBF24" width="11" height="11"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg><svg viewBox="0 0 20 20" fill="#FBBF24" width="11" height="11"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg></div>
+            </div>
+            <p class="sr-text">"Outstanding wrap on my car. I compared several shops for both pricing and quality, and they truly delivered the best on both."</p>
           </div>
           <div class="sr-card">
-            <div class="sr-top"><span class="sr-name">Sarah K.</span><div class="sr-card-stars"><svg viewBox="0 0 20 20" fill="#FBBF24" width="11" height="11"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg><svg viewBox="0 0 20 20" fill="#FBBF24" width="11" height="11"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg><svg viewBox="0 0 20 20" fill="#FBBF24" width="11" height="11"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg><svg viewBox="0 0 20 20" fill="#FBBF24" width="11" height="11"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg><svg viewBox="0 0 20 20" fill="#FBBF24" width="11" height="11"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg></div></div>
-            <p class="sr-text">"Best PPF job in Calgary. My Porsche looks brand new even after a year of highway driving."</p>
+            <div class="sr-top">
+              <div class="sr-avatar" style="background:#0F9D58">Q</div>
+              <div class="sr-info"><div class="sr-name">Q M</div></div>
+              <div class="sr-card-stars"><svg viewBox="0 0 20 20" fill="#FBBF24" width="11" height="11"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg><svg viewBox="0 0 20 20" fill="#FBBF24" width="11" height="11"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg><svg viewBox="0 0 20 20" fill="#FBBF24" width="11" height="11"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg><svg viewBox="0 0 20 20" fill="#FBBF24" width="11" height="11"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg><svg viewBox="0 0 20 20" fill="#FBBF24" width="11" height="11"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg></div>
+            </div>
+            <p class="sr-text">"Ahmed was very professional and knowledgeable. Very happy with their work and seeing my car murdered out."</p>
           </div>
           <div class="sr-card">
-            <div class="sr-top"><span class="sr-name">Marcus T.</span><div class="sr-card-stars"><svg viewBox="0 0 20 20" fill="#FBBF24" width="11" height="11"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg><svg viewBox="0 0 20 20" fill="#FBBF24" width="11" height="11"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg><svg viewBox="0 0 20 20" fill="#FBBF24" width="11" height="11"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg><svg viewBox="0 0 20 20" fill="#FBBF24" width="11" height="11"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg><svg viewBox="0 0 20 20" fill="#FBBF24" width="11" height="11"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg></div></div>
-            <p class="sr-text">"The starlight headliner blew my mind. Everyone who gets in my truck asks about it."</p>
+            <div class="sr-top">
+              <div class="sr-avatar" style="background:#F4B400">K</div>
+              <div class="sr-info"><div class="sr-name">Kyle Backiney</div></div>
+              <div class="sr-card-stars"><svg viewBox="0 0 20 20" fill="#FBBF24" width="11" height="11"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg><svg viewBox="0 0 20 20" fill="#FBBF24" width="11" height="11"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg><svg viewBox="0 0 20 20" fill="#FBBF24" width="11" height="11"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg><svg viewBox="0 0 20 20" fill="#FBBF24" width="11" height="11"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg><svg viewBox="0 0 20 20" fill="#FBBF24" width="11" height="11"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg></div>
+            </div>
+            <p class="sr-text">"Not only did they make it happen in a matter of hours, they were very affordable. The wrap install was perfect."</p>
+          </div>
+          <div class="sr-card">
+            <div class="sr-top">
+              <div class="sr-avatar" style="background:#7B1FA2">R</div>
+              <div class="sr-info"><div class="sr-name">Rami Sandhu</div></div>
+              <div class="sr-card-stars"><svg viewBox="0 0 20 20" fill="#FBBF24" width="11" height="11"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg><svg viewBox="0 0 20 20" fill="#FBBF24" width="11" height="11"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg><svg viewBox="0 0 20 20" fill="#FBBF24" width="11" height="11"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg><svg viewBox="0 0 20 20" fill="#FBBF24" width="11" height="11"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg><svg viewBox="0 0 20 20" fill="#FBBF24" width="11" height="11"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg></div>
+            </div>
+            <p class="sr-text">"My cars look beautiful. Very happy with the window tinting. Wraptors was very accommodating with my schedule."</p>
+          </div>
+          <div class="sr-card">
+            <div class="sr-top">
+              <div class="sr-avatar" style="background:#00897B">H</div>
+              <div class="sr-info"><div class="sr-name">Hafiz Mitha</div><div class="sr-badge">Local Guide</div></div>
+              <div class="sr-card-stars"><svg viewBox="0 0 20 20" fill="#FBBF24" width="11" height="11"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg><svg viewBox="0 0 20 20" fill="#FBBF24" width="11" height="11"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg><svg viewBox="0 0 20 20" fill="#FBBF24" width="11" height="11"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg><svg viewBox="0 0 20 20" fill="#FBBF24" width="11" height="11"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg><svg viewBox="0 0 20 20" fill="#FBBF24" width="11" height="11"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg></div>
+            </div>
+            <p class="sr-text">"Had my 4Runner wrapped and company logo added. Ahmed and his team provided an amazing experience. Highly recommend."</p>
           </div>
         </div>
       </div>
@@ -1737,6 +1772,9 @@ function openCheckout() {
 }
 
 function closeCheckout() {
+  if (coStep >= 2) {
+    if (!confirm('You have an appointment in progress. Are you sure you want to leave?')) return;
+  }
   document.getElementById('checkoutModal').classList.remove('open');
   document.body.style.overflow = '';
   sessionStorage.removeItem('wrp_state');
@@ -2227,7 +2265,7 @@ setInterval(rotateReviews, 5000);
 
 // ═══ EXIT WARNING ═══
 window.addEventListener('beforeunload', function(e) {
-  if (selected.size > 0 || document.getElementById('checkoutModal').classList.contains('open')) {
+  if (document.getElementById('checkoutModal').classList.contains('open') && coStep >= 2) {
     e.preventDefault();
     e.returnValue = '';
   }
