@@ -426,6 +426,38 @@
       font-size:11px;color:var(--txm);line-height:1.6;text-align:center;
     }
 
+    /* Exit confirmation modal */
+    .exit-overlay{
+      position:fixed;inset:0;z-index:3000;
+      background:rgba(0,0,0,.75);backdrop-filter:blur(6px);
+      display:flex;align-items:center;justify-content:center;
+      opacity:0;pointer-events:none;transition:opacity .25s;padding:20px;
+    }
+    .exit-overlay.open{opacity:1;pointer-events:auto}
+    .exit-dialog{
+      background:var(--sf);border:1px solid var(--bdr);border-radius:var(--r);
+      width:100%;max-width:380px;padding:32px 28px;text-align:center;
+      transform:translateY(12px) scale(.97);transition:transform .25s;
+    }
+    .exit-overlay.open .exit-dialog{transform:translateY(0) scale(1)}
+    .exit-icon{
+      width:56px;height:56px;border-radius:50%;
+      background:rgba(239,68,68,.1);border:2px solid rgba(239,68,68,.2);
+      display:flex;align-items:center;justify-content:center;
+      margin:0 auto 16px;
+    }
+    .exit-title{font-size:18px;font-weight:800;color:var(--tx);margin-bottom:6px}
+    .exit-text{font-size:13px;color:var(--tx2);line-height:1.6;margin-bottom:24px}
+    .exit-btns{display:flex;gap:10px}
+    .exit-btn{
+      flex:1;padding:12px;border-radius:var(--rs);font-family:inherit;
+      font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;
+    }
+    .exit-btn.stay{background:var(--acc);border:none;color:#09090b}
+    .exit-btn.stay:hover{box-shadow:0 4px 16px rgba(201,168,76,.3)}
+    .exit-btn.leave{background:var(--sf2);border:1px solid var(--bdr);color:var(--tx2)}
+    .exit-btn.leave:hover{background:var(--sf3);color:var(--tx)}
+
     /* Nav buttons */
     .co-nav{display:flex;gap:12px;margin-top:24px}
     .co-nav button{
@@ -586,7 +618,7 @@
     .etf-ref .ref-hint{font-size:11px;color:var(--txm);margin-top:3px}
 
     /* ── SERVICE TURNAROUND TIME ── */
-    .si-time{font-size:11px;color:var(--acc);display:flex;align-items:center;gap:4px;margin-top:3px;font-weight:600}
+    .si-time{font-size:11px;color:var(--txm);display:flex;align-items:center;gap:4px;margin-top:3px;font-weight:500}
     .si-time svg{width:12px;height:12px;flex-shrink:0}
 
     /* ── DARK MODE TOGGLE ── */
@@ -1035,6 +1067,21 @@
 </div>
 
 <div class="v-toast" id="vToast"></div>
+
+<!-- EXIT CONFIRMATION -->
+<div class="exit-overlay" id="exitOverlay">
+  <div class="exit-dialog">
+    <div class="exit-icon">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    </div>
+    <div class="exit-title">Leave checkout?</div>
+    <div class="exit-text">You have an appointment in progress. Your selections and info will be lost if you leave now.</div>
+    <div class="exit-btns">
+      <button class="exit-btn leave" onclick="confirmExit()">Leave</button>
+      <button class="exit-btn stay" onclick="cancelExit()">Stay</button>
+    </div>
+  </div>
+</div>
 
 <script>
 // ═══ DATA ═══
@@ -1773,12 +1820,21 @@ function openCheckout() {
 
 function closeCheckout() {
   if (coStep >= 2) {
-    if (!confirm('You have an appointment in progress. Are you sure you want to leave?')) return;
+    document.getElementById('exitOverlay').classList.add('open');
+    return;
   }
+  doCloseCheckout();
+}
+
+function doCloseCheckout() {
   document.getElementById('checkoutModal').classList.remove('open');
+  document.getElementById('exitOverlay').classList.remove('open');
   document.body.style.overflow = '';
   sessionStorage.removeItem('wrp_state');
 }
+
+function confirmExit() { doCloseCheckout(); }
+function cancelExit() { document.getElementById('exitOverlay').classList.remove('open'); }
 
 function showStep(n) {
   document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
