@@ -33,7 +33,7 @@
     .hdr-logo{width:110px;height:110px;border-radius:50%;object-fit:cover;border:2px solid var(--acc-d);margin-bottom:14px}
     .hdr h1{font-size:clamp(24px,5vw,34px);font-weight:900;letter-spacing:-.4px;margin-bottom:8px}
     .hdr-sub{font-size:15px;color:var(--tx2);max-width:420px;margin:0 auto 18px;line-height:1.5}
-    .social-row{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap}
+    .social-row{display:flex;align-items:center;justify-content:center;gap:10px}
     .social-badge{
       display:flex;align-items:center;justify-content:center;
       width:40px;height:40px;border-radius:50%;
@@ -50,6 +50,7 @@
     .g-badge .stars svg{width:14px;height:14px}
     .g-badge .rt{font-weight:700;color:var(--tx)}
     .g-badge .ct{color:var(--txm)}
+    @media(max-width:420px){.social-row{gap:8px}.g-badge{padding:6px 10px;gap:6px;font-size:12px}}
 
     /* ── CARD ── */
     .card{background:var(--sf);border:1px solid var(--bdr);border-radius:var(--r);padding:28px;margin-bottom:20px}
@@ -194,7 +195,7 @@
       transform:translateY(-4px);
       transition:max-height .35s cubic-bezier(.4,0,.2,1),opacity .3s ease,transform .3s ease,margin-top .3s ease;
     }
-    .info-desc.show{max-height:120px;opacity:1;transform:translateY(0);margin-top:4px}
+    .info-desc.show{max-height:200px;opacity:1;transform:translateY(0);margin-top:4px}
 
     /* Toast notification */
     .v-toast{
@@ -387,6 +388,44 @@
     .card-fields{display:none}
     .card-fields.show{display:block;animation:fi .2s ease}
 
+    /* E-transfer info */
+    .etransfer-info{display:none;padding:16px;background:var(--acc-d);border:1px solid rgba(201,168,76,.2);border-radius:var(--rs);margin-bottom:8px}
+    .etransfer-info.show{display:block;animation:fi .2s ease}
+    .etransfer-info p{font-size:13px;color:var(--tx2);line-height:1.7;margin:0}
+    .etransfer-info .etf-highlight{color:var(--acc);font-weight:600}
+
+    /* Popular badge + shimmer */
+    .pay-opt{position:relative;overflow:hidden}
+    .popular-tag{
+      position:absolute;top:-1px;right:-1px;z-index:2;
+      background:linear-gradient(135deg,var(--acc),#d4b45a);
+      color:#09090b;font-size:9px;font-weight:800;text-transform:uppercase;
+      padding:3px 10px;border-radius:0 var(--rs) 0 8px;letter-spacing:.5px;
+      box-shadow:0 2px 8px rgba(201,168,76,.4);
+    }
+    .pay-opt.popular{border-color:rgba(201,168,76,.3)}
+    .pay-opt.popular::before{
+      content:'';position:absolute;inset:0;z-index:1;
+      background:linear-gradient(105deg,transparent 35%,rgba(201,168,76,.08) 45%,rgba(201,168,76,.16) 50%,rgba(201,168,76,.08) 55%,transparent 65%);
+      background-size:250% 100%;animation:shine 4s ease-in-out infinite;pointer-events:none;
+    }
+    @keyframes shine{0%,100%{background-position:200% 0}50%{background-position:-50% 0}}
+
+    /* Color note */
+    .color-note{
+      padding:12px 16px;margin:8px 8px 4px;
+      background:var(--acc-d);border:1px solid rgba(201,168,76,.15);border-radius:var(--rs);
+      font-size:12px;color:var(--tx2);line-height:1.5;
+    }
+    .color-note strong{color:var(--acc);font-weight:600}
+
+    /* Film disclaimer */
+    .film-disclaimer{
+      margin-top:16px;padding:14px 16px;
+      background:var(--sf2);border:1px solid var(--bdr);border-radius:var(--rs);
+      font-size:11px;color:var(--txm);line-height:1.6;text-align:center;
+    }
+
     /* Nav buttons */
     .co-nav{display:flex;gap:12px;margin-top:24px}
     .co-nav button{
@@ -513,16 +552,100 @@
     .cal-cell.selected{background:var(--acc);color:#09090b;font-weight:700}
     .cal-cell.disabled{color:var(--bdr);cursor:default;pointer-events:none}
     .cal-cell.empty{pointer-events:none}
+
+    /* ── E-TRANSFER STEPS ── */
+    .etf-steps{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+    .etf-step{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--tx2);line-height:1.5}
+    .etf-step strong{color:var(--tx)}
+    .etf-num{
+      width:22px;height:22px;border-radius:50%;flex-shrink:0;
+      background:var(--acc);color:#09090b;font-size:11px;font-weight:700;
+      display:flex;align-items:center;justify-content:center;margin-top:1px;
+    }
+
+    /* ── SERVICE TURNAROUND TIME ── */
+    .si-time{font-size:11px;color:var(--acc);display:flex;align-items:center;gap:4px;margin-top:3px;font-weight:600}
+    .si-time svg{width:12px;height:12px;flex-shrink:0}
+
+    /* ── DARK MODE TOGGLE ── */
+    .theme-toggle{
+      position:fixed;top:16px;right:16px;z-index:500;
+      width:38px;height:38px;border-radius:50%;
+      background:var(--sf2);border:1px solid var(--bdr);
+      color:var(--txm);cursor:pointer;
+      display:flex;align-items:center;justify-content:center;
+      transition:all .2s;
+    }
+    .theme-toggle:hover{border-color:var(--acc);color:var(--acc)}
+
+    .back-btn{
+      display:inline-flex;align-items:center;gap:5px;
+      padding:6px 14px;border-radius:100px;margin-bottom:14px;
+      background:var(--sf2);border:1px solid var(--bdr);
+      color:var(--txm);font-family:inherit;font-size:11px;font-weight:600;
+      text-decoration:none;cursor:pointer;transition:all .2s;
+    }
+    .back-btn:hover{border-color:var(--acc);color:var(--acc)}
+
+    body.light-mode{
+      --bg:#f8f8fa;--sf:#ffffff;--sf2:#f0f0f2;--sf3:#e8e8ec;
+      --bdr:#d4d4d8;--bdr2:#a1a1aa;
+      --acc:#b8942e;--acc-d:rgba(184,148,46,.1);--acc-g:rgba(184,148,46,.2);
+      --tx:#1a1a1e;--tx2:#52525b;--txm:#71717a;
+    }
+    body.light-mode .svc-hdr::after{
+      background:linear-gradient(90deg,rgba(255,255,255,.55) 0%,rgba(255,255,255,.25) 40%,rgba(255,255,255,.05) 100%);
+    }
+    body.light-mode .svc-hdr .nm,body.light-mode .svc-hdr .desc{text-shadow:0 1px 6px rgba(255,255,255,.8),0 0 2px rgba(0,0,0,.3)}
+
+    /* ── REFERRAL BANNER ── */
+    .referral-banner{
+      display:flex;align-items:center;gap:14px;
+      margin-top:16px;padding:18px;
+      background:var(--acc-d);border:1px solid rgba(201,168,76,.2);border-radius:var(--r);
+    }
+    .referral-icon{flex-shrink:0}
+    .referral-title{font-size:14px;font-weight:700;color:var(--tx);margin-bottom:2px}
+    .referral-text{font-size:12px;color:var(--tx2);line-height:1.4}
+
+    /* ── Sidebar Reviews ── */
+    .sidebar-reviews{margin-top:16px;padding:16px 0 0}
+    .sr-header{display:flex;align-items:center;gap:6px;margin-bottom:14px;padding:0 4px}
+    .sr-rating{font-size:15px;font-weight:800;color:var(--tx)}
+    .sr-stars{display:flex;gap:1px}
+    .sr-count{font-size:11px;color:var(--txm);margin-left:2px}
+    .sr-carousel{position:relative;min-height:65px;overflow:hidden}
+    .sr-card{
+      position:absolute;inset:0;
+      opacity:0;transform:translateY(12px);
+      transition:opacity .5s ease,transform .5s ease;
+      padding:12px 16px;
+      background:var(--sf);border:1px solid var(--bdr);border-radius:var(--rs);
+    }
+    .sr-card.active{position:relative;opacity:1;transform:translateY(0)}
+    .sr-card.exiting{opacity:0;transform:translateY(-12px)}
+    .sr-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+    .sr-name{font-size:12px;font-weight:700;color:var(--tx)}
+    .sr-card-stars{display:flex;gap:1px}
+    .sr-text{font-size:12px;color:var(--tx2);line-height:1.5;margin:0;font-style:italic}
   </style>
 </head>
 <body>
+<button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle light/dark mode">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"/></svg>
+</button>
+
 <div class="page-wrap">
 
   <!-- HEADER (full width above columns) -->
   <div class="hdr fi">
+    <a class="back-btn" href="#" id="backToSite" title="Back to website">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 2L4 8l6 6"/></svg>
+      <span>Back to Website</span>
+    </a>
     <img src="logo.jpg" alt="Wraptors" class="hdr-logo" />
     <h1>What's My Wrap Cost?</h1>
-    <p class="hdr-sub">Choose your ride, pick your services, and get an instant price estimate</p>
+    <p class="hdr-sub">Build your custom quote — wraps, PPF, tint, detailing &amp; more</p>
     <div class="social-row">
       <a class="social-badge ig" href="https://www.instagram.com/wraptors.calgary/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
@@ -607,6 +730,7 @@
       <div class="card fi" style="animation-delay:.08s">
         <div class="card-label">Select Your Services <span class="bar"></span></div>
         <div id="cats"></div>
+        <div class="film-disclaimer">Pricing may vary depending on the vinyl film brand you choose (3M, Avery Dennison, Project X60, etc.). Final pricing will be confirmed at your appointment.</div>
       </div>
     </div>
 
@@ -620,6 +744,43 @@
               <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--txm)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
             </div>
             Your cart is empty
+          </div>
+        </div>
+      </div>
+      <div class="referral-banner fi" style="animation-delay:.16s">
+        <div class="referral-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--acc)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v10H4V12"/><path d="M2 7h20v5H2z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z"/></svg>
+        </div>
+        <div>
+          <div class="referral-title">Refer a Friend</div>
+          <div class="referral-text">Get $100 off your next service when your referral books</div>
+        </div>
+      </div>
+      <div class="sidebar-reviews fi" style="animation-delay:.2s">
+        <div class="sr-header">
+          <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20H24v8.5h11.3C34 33.3 29.5 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3 0 5.7 1.1 7.8 2.9l6.1-6.1C34 5.1 29.3 3 24 3 12.4 3 3 12.4 3 24s9.4 21 21 21c11 0 20.5-8 20.5-21 0-1.3-.2-2.7-.4-4z"/><path fill="#FF3D00" d="M6.3 14.7l7 5.1C15 16.1 19.2 13 24 13c3 0 5.7 1.1 7.8 2.9l6.1-6.1C34 5.1 29.3 3 24 3 16 3 9.2 7.8 6.3 14.7z"/><path fill="#4CAF50" d="M24 45c5.2 0 9.9-1.8 13.4-4.9l-6.5-5.4C28.9 36.2 26.6 37 24 37c-5.4 0-10-3.6-11.7-8.5l-7 5.4C8.5 40.5 15.7 45 24 45z"/><path fill="#1976D2" d="M43.6 20H24v8.5h11.3c-.8 2.5-2.3 4.5-4.4 5.9l6.5 5.4C42 35.5 46 30 46 24c0-1.3-.2-2.7-.4-4z"/></svg>
+          <span class="sr-rating">4.9</span>
+          <div class="sr-stars">
+            <svg viewBox="0 0 20 20" fill="#FBBF24" width="13" height="13"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg>
+            <svg viewBox="0 0 20 20" fill="#FBBF24" width="13" height="13"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg>
+            <svg viewBox="0 0 20 20" fill="#FBBF24" width="13" height="13"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg>
+            <svg viewBox="0 0 20 20" fill="#FBBF24" width="13" height="13"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg>
+            <svg viewBox="0 0 20 20" fill="#FBBF24" width="13" height="13"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg>
+          </div>
+          <span class="sr-count">250+ reviews</span>
+        </div>
+        <div class="sr-carousel" id="srCarousel">
+          <div class="sr-card active">
+            <div class="sr-top"><span class="sr-name">Jordan M.</span><div class="sr-card-stars"><svg viewBox="0 0 20 20" fill="#FBBF24" width="11" height="11"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg><svg viewBox="0 0 20 20" fill="#FBBF24" width="11" height="11"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg><svg viewBox="0 0 20 20" fill="#FBBF24" width="11" height="11"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg><svg viewBox="0 0 20 20" fill="#FBBF24" width="11" height="11"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg><svg viewBox="0 0 20 20" fill="#FBBF24" width="11" height="11"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg></div></div>
+            <p class="sr-text">"Got my Tesla wrapped in satin black — absolutely flawless work. Worth every penny."</p>
+          </div>
+          <div class="sr-card">
+            <div class="sr-top"><span class="sr-name">Sarah K.</span><div class="sr-card-stars"><svg viewBox="0 0 20 20" fill="#FBBF24" width="11" height="11"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg><svg viewBox="0 0 20 20" fill="#FBBF24" width="11" height="11"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg><svg viewBox="0 0 20 20" fill="#FBBF24" width="11" height="11"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg><svg viewBox="0 0 20 20" fill="#FBBF24" width="11" height="11"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg><svg viewBox="0 0 20 20" fill="#FBBF24" width="11" height="11"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg></div></div>
+            <p class="sr-text">"Best PPF job in Calgary. My Porsche looks brand new even after a year of highway driving."</p>
+          </div>
+          <div class="sr-card">
+            <div class="sr-top"><span class="sr-name">Marcus T.</span><div class="sr-card-stars"><svg viewBox="0 0 20 20" fill="#FBBF24" width="11" height="11"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg><svg viewBox="0 0 20 20" fill="#FBBF24" width="11" height="11"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg><svg viewBox="0 0 20 20" fill="#FBBF24" width="11" height="11"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg><svg viewBox="0 0 20 20" fill="#FBBF24" width="11" height="11"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg><svg viewBox="0 0 20 20" fill="#FBBF24" width="11" height="11"><path d="M9.05 2.53a1 1 0 011.9 0l1.28 3.94h4.14a1 1 0 01.59 1.81L13.6 11l1.28 3.94a1 1 0 01-1.54 1.12L10 13.35l-3.34 2.71a1 1 0 01-1.54-1.12L6.4 11 3.04 8.28a1 1 0 01.59-1.81h4.14z"/></svg></div></div>
+            <p class="sr-text">"The starlight headliner blew my mind. Everyone who gets in my truck asks about it."</p>
           </div>
         </div>
       </div>
@@ -738,9 +899,10 @@
               <div class="pay-icon"><svg viewBox="0 0 48 32" xmlns="http://www.w3.org/2000/svg"><path d="M24.2 7.4c1.2-1.5 2-3.5 1.8-5.4-1.8.1-3.9 1.2-5.1 2.6-1.1 1.3-2.1 3.4-1.8 5.3 2 .1 3.9-1 5.1-2.5zm4.5 13c-.1-2.9 2.4-4.3 2.5-4.4-1.4-2-3.5-2.3-4.2-2.3-1.8-.2-3.5 1-4.4 1s-2.3-1-3.8-1c-2 0-3.7 1.1-4.7 2.9-2 3.5-.5 8.6 1.4 11.4 1 1.4 2.1 3 3.6 2.9 1.4-.1 2-1 3.7-1s2.2 1 3.8 1c1.5 0 2.5-1.4 3.5-2.8 1.1-1.6 1.5-3.2 1.6-3.2-.1-.1-3-1.2-3-4.5z"/></svg></div>
               <div class="pay-name">Apple Pay</div>
             </div>
-            <div class="pay-opt" onclick="selectPay(this,'paypal')">
-              <div class="pay-icon"><svg viewBox="0 0 48 32" xmlns="http://www.w3.org/2000/svg"><path d="M18.5 27.5h-3.2c-.3 0-.5-.2-.4-.5l3.6-22.5c0-.2.3-.4.5-.4h7.8c2.6 0 4.5.5 5.6 1.6 1 1 1.4 2.4 1.1 4.3-.4 2.5-1.5 4.2-3.2 5.3-1.6 1-3.8 1.5-6.3 1.5h-1.6c-.4 0-.7.3-.8.7l-1.2 7.4c-.1.6-.5 1-.9 1.1h-1zm9.3-18.6h-2.2l-1.5 9.2h1c2.2 0 3.8-.4 5-1.2 1.1-.8 1.8-2.1 2.1-3.8.3-1.5 0-2.6-.7-3.2-.7-.7-2-1-3.7-1z"/></svg></div>
-              <div class="pay-name">PayPal</div>
+            <div class="pay-opt popular" onclick="selectPay(this,'etransfer')">
+              <span class="popular-tag">Popular</span>
+              <div class="pay-icon"><svg viewBox="0 0 48 32" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="5" width="42" height="22" rx="4" stroke="var(--tx2)" stroke-width="2" fill="none"/><text x="24" y="20" text-anchor="middle" font-family="Inter,sans-serif" font-size="14" font-weight="700" fill="var(--tx2)">$</text><path d="M33 10l3 3-3 3" stroke="var(--tx2)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/><line x1="26" y1="13" x2="35" y2="13" stroke="var(--tx2)" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+              <div class="pay-name">e-Transfer</div>
             </div>
           </div>
           <div class="card-fields show" id="cardFields">
@@ -767,6 +929,10 @@
               </div>
             </div>
           </div>
+          <div class="etransfer-info" id="etransferInfo">
+            <p style="margin-bottom:8px"><strong style="color:var(--acc)">Book first, pay to confirm.</strong></p>
+            <p>Your appointment will be held for <strong>24 hours</strong>. After booking, send your e-Transfer to <strong class="etf-highlight">wraptorscalgary@gmail.com</strong> to confirm your spot. We'll verify and send you a confirmation text.</p>
+          </div>
           <div class="co-nav">
             <button class="btn-back" onclick="prevStep(3)">Back</button>
             <button class="btn-next" onclick="nextStep(3)">Review Order</button>
@@ -788,10 +954,11 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
           </div>
           <div class="confirm-text">
-            <h3>Booking Confirmed!</h3>
+            <h3 id="confirmHeading">Booking Confirmed!</h3>
             <p>We've received your appointment request. You'll get a confirmation email shortly with all the details.</p>
             <div class="ref" id="refNum" style="display:none"></div>
           </div>
+          <div id="confirmEtfSection" style="display:none"></div>
           <div class="cal-section">
             <div class="cal-title">Add to Calendar</div>
             <div class="cal-btns" id="calBtns"></div>
@@ -805,7 +972,7 @@
 
   <div class="ftr fi" style="animation-delay:.16s">
     <div class="brand">Built by <a href="https://connectflowsolutions.com/" target="_blank" rel="noopener noreferrer" style="color:var(--acc);text-decoration:none;transition:opacity .2s" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">ConnectFlow Solutions</a></div>
-    <div class="note">Prices are estimates and may vary based on vehicle condition &amp; scope of work. Tax: 8.25%</div>
+    <div class="note">Prices are estimates and may vary based on vehicle condition &amp; scope of work. Tax: 5% GST</div>
   </div>
 </div>
 
@@ -813,8 +980,26 @@
 
 <script>
 // ═══ DATA ═══
-const TAX = 0.0825;
+const TAX = 0.05;
 const checkSVG = '<svg class="check-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.7 5.3a1 1 0 010 1.4l-8 8a1 1 0 01-1.4 0l-4-4a1 1 0 011.4-1.4L8 12.58l7.3-7.3a1 1 0 011.4 0z"/></svg>';
+
+const serviceTimes = {
+  'Full Vinyl Wrap':'3\u20135 days','Roof Wrap':'1 day','Hood Wrap':'1 day','Chrome Delete':'1\u20132 days','Side Wraps':'2\u20133 days',
+  'Clear PPF \u2014 Full Body':'2\u20134 days','Clear PPF \u2014 Full Front':'1\u20132 days','Clear PPF \u2014 Partial':'1 day',
+  'Colored PPF \u2014 Full Body':'2\u20134 days','Colored PPF \u2014 Full Front':'1\u20132 days',
+  'Window Tint \u2014 Full Vehicle':'2\u20134 hrs','Window Tint \u2014 Front Two':'1\u20132 hrs','Windshield Tint':'1\u20132 hrs',
+  'Custom Caliper Paint':'1\u20132 days',
+  'PC \u2014 Rims (Set of 4)':'3\u20135 days','PC \u2014 Calipers (Set of 4)':'2\u20133 days',
+  'PC \u2014 Turbo(s)':'2\u20133 days','PC \u2014 Intake Manifold':'2\u20133 days','PC \u2014 Valve Covers':'2\u20133 days',
+  'PC \u2014 Sway Bars':'2\u20133 days','PC \u2014 Brackets & Hardware':'1\u20132 days','PC \u2014 Bolts & Fasteners':'1\u20132 days',
+  'PC \u2014 Springs (Set of 4)':'2\u20133 days',
+  'Starlight \u2014 800 Stars':'1\u20132 days','Starlight \u2014 1,100 Stars':'2\u20133 days','Starlight \u2014 2,100 Stars':'2\u20134 days',
+  'Basic Detail':'2\u20133 hrs','Premium Detail':'3\u20134 hrs','Ultimate Detail':'4\u20135 hrs',
+  'Exterior Express':'1\u20132 hrs','Exterior Pro':'4\u20136 hrs',
+  'Interior Deep Clean':'3\u20134 hrs','Interior Restoration':'5\u20137 hrs',
+};
+
+const clockSVG = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6.5"/><path d="M8 4v4l2.5 1.5" stroke-linecap="round"/></svg>';
 
 const makes = {
   'Acura':['TLX','TLX Type S','Integra','Integra Type S','MDX','MDX Type S','RDX','NSX','NSX Type S'],
@@ -874,13 +1059,16 @@ function vSize(model){
 }
 
 const P = {
-  'Full Vinyl Wrap':              {sed:{s:2800,p:3500,e:5500},suv:{s:3500,p:4200,e:6500},lg:{s:4200,p:5000,e:7500}},
-  'Partial Vinyl Wrap':           {sed:{s:800,p:1000,e:1600},suv:{s:1000,p:1200,e:1800},lg:{s:1200,p:1400,e:2200}},
-  'Clear PPF \u2014 Full Body':        {sed:{s:4500,p:5500,e:8000},suv:{s:5500,p:6500,e:9500},lg:{s:6500,p:7500,e:11000}},
-  'Clear PPF \u2014 Full Front':       {sed:{s:1500,p:1800,e:2800},suv:{s:1800,p:2200,e:3200},lg:{s:2200,p:2600,e:3800}},
-  'Clear PPF \u2014 Partial':          {sed:{s:800,p:1000,e:1500},suv:{s:1000,p:1200,e:1800},lg:{s:1200,p:1400,e:2000}},
-  'Colored PPF \u2014 Full Body':      {sed:{s:5500,p:6500,e:9500},suv:{s:6500,p:7800,e:11000},lg:{s:7800,p:9000,e:13000}},
-  'Colored PPF \u2014 Full Front':     {sed:{s:2200,p:2600,e:3800},suv:{s:2600,p:3000,e:4500},lg:{s:3000,p:3500,e:5200}},
+  'Full Vinyl Wrap':              {sed:{s:3500,p:3500,e:4500},suv:{s:3800,p:3800,e:4500},lg:{s:4500,p:4500,e:4500}},
+  'Roof Wrap':                    {sed:{s:475,p:475,e:565},suv:{s:475,p:475,e:565},lg:{s:565,p:565,e:565}},
+  'Hood Wrap':                    {sed:{s:575,p:575,e:655},suv:{s:575,p:575,e:655},lg:{s:655,p:655,e:655}},
+  'Chrome Delete':                {sed:{s:795,p:795,e:995},suv:{s:845,p:845,e:995},lg:{s:995,p:995,e:995}},
+  'Side Wraps':                   {sed:{s:800,p:800,e:1200},suv:{s:900,p:900,e:1400},lg:{s:1100,p:1100,e:1600}},
+  'Clear PPF \u2014 Full Body':        {sed:{s:1200,p:1200,e:1200},suv:{s:1200,p:1200,e:1200},lg:{s:1200,p:1200,e:1200}},
+  'Clear PPF \u2014 Full Front':       {sed:{s:600,p:600,e:600},suv:{s:600,p:600,e:600},lg:{s:600,p:600,e:600}},
+  'Clear PPF \u2014 Partial':          {sed:{s:400,p:400,e:400},suv:{s:400,p:400,e:400},lg:{s:400,p:400,e:400}},
+  'Colored PPF \u2014 Full Body':      {sed:{s:1600,p:1600,e:1600},suv:{s:1600,p:1600,e:1600},lg:{s:1600,p:1600,e:1600}},
+  'Colored PPF \u2014 Full Front':     {sed:{s:800,p:800,e:800},suv:{s:800,p:800,e:800},lg:{s:800,p:800,e:800}},
   'Window Tint \u2014 Full Vehicle':   {sed:{s:250,p:350,e:500},suv:{s:350,p:450,e:600},lg:{s:400,p:500,e:700}},
   'Window Tint \u2014 Front Two':      {sed:{s:100,p:120,e:180},suv:{s:100,p:120,e:180},lg:{s:120,p:140,e:200}},
   'Windshield Tint':              {sed:{s:150,p:200,e:300},suv:{s:200,p:250,e:350},lg:{s:250,p:300,e:400}},
@@ -894,64 +1082,85 @@ const P = {
   'PC \u2014 Brackets & Hardware':     {sed:{s:100,p:125,e:200},suv:{s:100,p:125,e:200},lg:{s:120,p:140,e:225}},
   'PC \u2014 Bolts & Fasteners':       {sed:{s:75,p:90,e:150},suv:{s:75,p:90,e:150},lg:{s:85,p:100,e:175}},
   'PC \u2014 Springs (Set of 4)':      {sed:{s:200,p:250,e:400},suv:{s:225,p:275,e:425},lg:{s:250,p:300,e:475}},
-  'Starlight Headliner':          {sed:{s:1200,p:1500,e:2500},suv:{s:1500,p:1800,e:3000},lg:{s:1800,p:2200,e:3500}},
-  'Full Detail':                  {sed:{s:300,p:450,e:800},suv:{s:400,p:550,e:950},lg:{s:500,p:650,e:1100}},
-  'Exterior Detail & Polish':     {sed:{s:175,p:250,e:450},suv:{s:225,p:325,e:550},lg:{s:275,p:400,e:650}},
-  'Interior Detail':              {sed:{s:150,p:200,e:350},suv:{s:200,p:275,e:450},lg:{s:250,p:325,e:500}},
+  'Starlight \u2014 800 Stars':        {sed:{s:1500,p:1500,e:1500},suv:{s:1500,p:1500,e:1500},lg:{s:1500,p:1500,e:1500}},
+  'Starlight \u2014 1,100 Stars':      {sed:{s:2500,p:2500,e:2500},suv:{s:2500,p:2500,e:2500},lg:{s:2500,p:2500,e:2500}},
+  'Starlight \u2014 2,100 Stars':      {sed:{s:3500,p:3500,e:3500},suv:{s:3500,p:3500,e:3500},lg:{s:3500,p:3500,e:3500}},
+  'Basic Detail':                 {sed:{s:199,p:199,e:199},suv:{s:199,p:199,e:199},lg:{s:199,p:199,e:199}},
+  'Premium Detail':               {sed:{s:299,p:299,e:299},suv:{s:299,p:299,e:299},lg:{s:299,p:299,e:299}},
+  'Ultimate Detail':              {sed:{s:349,p:349,e:349},suv:{s:349,p:349,e:349},lg:{s:349,p:349,e:349}},
+  'Exterior Express':             {sed:{s:99,p:99,e:99},suv:{s:99,p:99,e:99},lg:{s:99,p:99,e:99}},
+  'Exterior Pro':                 {sed:{s:379,p:379,e:379},suv:{s:379,p:379,e:379},lg:{s:379,p:379,e:379}},
+  'Interior Deep Clean':          {sed:{s:249,p:249,e:249},suv:{s:249,p:249,e:249},lg:{s:249,p:249,e:249}},
+  'Interior Restoration':         {sed:{s:449,p:449,e:449},suv:{s:449,p:449,e:449},lg:{s:449,p:449,e:449}},
 };
 
 // ═══ SERVICE IMAGE MAPPING ═══
 function getServiceThumb(k) {
-  if (k.includes('Vinyl'))                       return 'img-vinyl.png';
+  if (k.includes('Vinyl') || k.includes('Wrap') || k === 'Chrome Delete') return 'img-vinyl.png';
   if (k.includes('Clear PPF'))                   return 'img-clear-ppf.png';
   if (k.includes('Colored PPF'))                 return 'img-colored-ppf.png';
   if (k.includes('Window Tint') || k.includes('Windshield')) return 'img-window-tint.png';
   if (k.startsWith('PC'))                        return 'img-powder-coat.png';
   if (k.includes('Caliper'))                     return 'img-calipers.png';
-  if (k === 'Starlight Headliner')               return 'img-starlight.png';
-  if (k.includes('Detail'))                      return 'img-detailing.png';
+  if (k.includes('Starlight'))                   return 'img-starlight.png';
+  if (k.includes('Detail') || k.includes('Exterior') || k.includes('Interior')) return 'img-detailing.png';
   return 'logo.jpg';
 }
 
 // ═══ SERVICE DESCRIPTIONS (info button) ═══
 const serviceDescriptions = {
-  'Full Vinyl Wrap':'Complete color transformation that protects your original paint underneath',
-  'Partial Vinyl Wrap':'Custom accent panels — hood, roof, mirrors — for a two-tone look',
-  'Clear PPF — Full Body':'Invisible armor over every painted surface — blocks rocks, chips & scratches',
-  'Clear PPF — Full Front':'Shields the most vulnerable areas from road debris and stone chips',
-  'Clear PPF — Partial':'Targeted coverage on high-impact zones like bumper edges and mirrors',
-  'Colored PPF — Full Body':'Color change + paint protection in one premium self-healing film',
-  'Colored PPF — Full Front':'Bold front-end color with built-in paint protection',
-  'Window Tint — Full Vehicle':'Privacy, UV protection & heat rejection on every side and rear window',
-  'Window Tint — Front Two':'Match your rear tint or add privacy to the front doors',
-  'Windshield Tint':'Reduce glare and cabin heat with premium ceramic windshield film',
-  'Custom Caliper Paint':'Make your brakes pop with a custom color finish behind your wheels',
-  'PC — Rims (Set of 4)':'Durable, chip-resistant powder coat finish in any color you want',
-  'PC — Calipers (Set of 4)':'Heat-resistant coating that outlasts regular brake caliper paint',
-  'PC — Turbo(s)':'Show-quality finish for your turbo housing — heat resistant up to 1000°F',
-  'PC — Intake Manifold':'Clean, durable coating that resists corrosion and looks incredible',
-  'PC — Valve Covers':'Engine bay detail that stands out — any color, any finish',
-  'PC — Sway Bars':'Corrosion-resistant finish that keeps your suspension looking fresh',
-  'PC — Brackets & Hardware':'Color-matched finish for all your mounting brackets and hardware',
-  'PC — Bolts & Fasteners':'Complete the engine bay look with color-matched bolt sets',
-  'PC — Springs (Set of 4)':'Coated springs that resist rust and give a clean, finished look',
-  'Starlight Headliner':'Rolls-Royce inspired fiber-optic star ceiling — custom installed in any vehicle',
-  'Full Detail':'Complete restoration — interior steam clean, exterior paint correction & sealant',
-  'Exterior Detail & Polish':'Clay bar, paint correction, machine polish & long-lasting ceramic sealant',
-  'Interior Detail':'Deep clean, leather conditioning, steam sanitization & odor removal',
+  'Full Vinyl Wrap':'Complete color transformation covering every exterior panel.<br><strong>Includes:</strong> full disassembly of trim, mirrors & handles, surface prep, premium vinyl application, and reassembly.<br><strong>Warranty:</strong> material defects covered. Lasts 5\u20137 years with proper care.',
+  'Roof Wrap':'Color-change vinyl applied to your roof panel for a sleek two-tone look.<br><strong>Includes:</strong> surface prep, vinyl application, and edge tucking for a seamless finish.',
+  'Hood Wrap':'Bold color-change or accent vinyl on your hood.<br><strong>Includes:</strong> full hood prep, vinyl application, and heat forming around curves and vents.',
+  'Chrome Delete':'All chrome trim replaced with a blacked-out or color-matched vinyl finish.<br><strong>Includes:</strong> window trim, grille accents, badges, and any chrome details.',
+  'Side Wraps':'Both left and right side panels wrapped in your chosen color or accent.<br><strong>Includes:</strong> door panels, rocker panels, and rear quarter panels with edge wrapping.',
+  'Clear PPF \u2014 Full Body':'Invisible self-healing paint protection film over every painted surface.<br><strong>Includes:</strong> hood, fenders, bumper, doors, roof, trunk, mirrors, and all edges.<br><strong>Protection:</strong> rock chips, scratches, UV, bird droppings. Lasts 7\u201310 years.',
+  'Clear PPF \u2014 Full Front':'Shields the most vulnerable front-end surfaces from road debris.<br><strong>Includes:</strong> full hood, front fenders, front bumper, mirrors, and headlights.',
+  'Clear PPF \u2014 Partial':'Targeted protection on the highest-impact zones.<br><strong>Includes:</strong> partial hood (18\u201324 inches), bumper edges, mirror caps, and door cups.',
+  'Colored PPF \u2014 Full Body':'Color change + paint protection in one premium self-healing film.<br><strong>Includes:</strong> full body coverage in matte, gloss, or satin finish.<br><strong>Benefit:</strong> no need for a separate wrap \u2014 color and protection in one layer.',
+  'Colored PPF \u2014 Full Front':'Bold front-end color transformation with built-in PPF protection.<br><strong>Includes:</strong> hood, bumper, fenders, mirrors in your chosen colored PPF.',
+  'Window Tint \u2014 Full Vehicle':'Premium ceramic tint on every side and rear window.<br><strong>Includes:</strong> all side windows and rear windshield.<br><strong>Benefits:</strong> UV protection, heat rejection, glare reduction, and privacy.',
+  'Window Tint \u2014 Front Two':'Ceramic tint on driver and passenger windows.<br><strong>Includes:</strong> both front door windows with your choice of tint darkness.',
+  'Windshield Tint':'Premium ceramic film applied to the full windshield.<br><strong>Benefits:</strong> reduces glare, blocks 99% UV rays, and lowers cabin temperature.',
+  'Custom Caliper Paint':'All four brake calipers painted in any custom color.<br><strong>Includes:</strong> removal, cleaning, sanding, primer, paint, clear coat, and reinstallation.',
+  'PC \u2014 Rims (Set of 4)':'Professional powder coating on all four wheels.<br><strong>Includes:</strong> strip, sandblast, powder application, bake, and clear coat.<br><strong>Finish options:</strong> gloss, matte, satin, or textured in 10,000+ colors.',
+  'PC \u2014 Calipers (Set of 4)':'Heat-resistant powder coat on all four brake calipers.<br><strong>Includes:</strong> removal, cleaning, coating, and reinstallation. Outlasts regular paint.',
+  'PC \u2014 Turbo(s)':'Show-quality powder coat for turbo housings.<br><strong>Heat resistant</strong> up to 1000\u00b0F. Single or twin turbo.',
+  'PC \u2014 Intake Manifold':'Durable, corrosion-resistant coating on your intake manifold.<br>Any color, any finish \u2014 makes your engine bay stand out.',
+  'PC \u2014 Valve Covers':'Color-matched or custom valve cover coating.<br>Resistant to heat, oil, and corrosion. Any color available.',
+  'PC \u2014 Sway Bars':'Front and/or rear sway bars with a corrosion-resistant powder coat.<br>Keeps your suspension looking factory-fresh.',
+  'PC \u2014 Brackets & Hardware':'Color-matched coating for all mounting brackets and hardware.<br>Completes the engine bay aesthetic.',
+  'PC \u2014 Bolts & Fasteners':'Full bolt set powder coated to match your build.<br>Engine bay or chassis \u2014 the finishing touch.',
+  'PC \u2014 Springs (Set of 4)':'All four coil or coilover springs powder coated.<br>Rust-resistant, chip-resistant, clean finished look.',
+  'Starlight \u2014 800 Stars':'Fiber-optic star ceiling with 800 individual stars.<br><strong>Includes:</strong> 400+ LED color options, twinkling effect, remote + app control, all wiring hidden.<br><strong>Best for:</strong> small coupes and compact sedans.',
+  'Starlight \u2014 1,100 Stars':'Fiber-optic star ceiling with 1,100 stars for fuller coverage.<br><strong>Includes:</strong> multi-spectrum LEDs, twinkle mode, remote + app, hidden wiring.<br><strong>Best for:</strong> sedans and mid-size SUVs.',
+  'Starlight \u2014 2,100 Stars':'Premium 2,100-star ceiling for maximum wow factor.<br><strong>Includes:</strong> dense star layout, full RGB spectrum, shooting star effect, remote + app.<br><strong>Best for:</strong> large SUVs, trucks, and luxury vehicles.',
+  'Basic Detail':'Wash & dry, interior vacuum, window clean, dash & console wipe down.<br><strong>Best for:</strong> regular maintenance between deeper cleans.',
+  'Premium Detail':'Everything in Basic + clay bar treatment, wax, deep interior cleaning & interior steam.<br><strong>Best for:</strong> vehicles that need a refresh.',
+  'Ultimate Detail':'Everything in Premium + full exterior wax, ceramic spray, headlight polish & scent bomb.<br><strong>Best for:</strong> vehicles needing a full restoration to showroom condition.',
+  'Exterior Express':'Quick hand wash, wheel cleaning, tire shine & hand dry.<br><strong>Best for:</strong> a fast refresh when you\u2019re short on time.',
+  'Exterior Pro':'Premium wash, clay bar, full polish, wax protection, wheel shine & trim restoration.<br><strong>Best for:</strong> paint correction and long-lasting exterior protection.',
+  'Interior Deep Clean':'Deep vacuum, upholstery shampoo, dashboard detailing, door panel cleaning & air freshening.<br><strong>Best for:</strong> interiors with stains, odors, or heavy use.',
+  'Interior Restoration':'Full steam cleaning, stain removal, leather treatment, carpet extraction, odor elimination & UV protection.<br><strong>Best for:</strong> heavily soiled interiors or pre-sale preparation.',
 };
 
 const categories = [
-  {name:'Vinyl Wraps',icon:'\ud83c\udfa8',desc:'Full & partial color-change wraps',img:'vinyl',items:[
+  {name:'Vinyl Wraps',icon:'\ud83c\udfa8',desc:'Full wraps, roof, hood & chrome delete',img:'vinyl',items:[
     {k:'Full Vinyl Wrap',label:'Full Vehicle Wrap',sub:'Complete color-change vinyl wrap'},
-    {k:'Partial Vinyl Wrap',label:'Partial Wrap',sub:'Hood, roof, mirrors, or accent panels'}]},
+    {k:'Roof Wrap',label:'Roof Wrap',sub:'Color-change vinyl roof wrap'},
+    {k:'Hood Wrap',label:'Hood Wrap',sub:'Color-change vinyl hood wrap'},
+    {k:'Chrome Delete',label:'Chrome Delete',sub:'Blackout or color-match all chrome trim'},
+    {k:'Side Wraps',label:'Side Wraps (Left & Right)',sub:'Both side panels \u2014 color or accent wrap'}],
+    note:'We carry <strong>3M, Avery Dennison & Project X60</strong> films \u2014 book an appointment to browse our full color library in person.'},
   {name:'Clear Paint Protection Film',icon:'\ud83d\udee1\ufe0f',desc:'Invisible paint protection',img:'clear-ppf',items:[
     {k:'Clear PPF \u2014 Full Body',label:'Full Body PPF',sub:'Every painted surface protected'},
     {k:'Clear PPF \u2014 Full Front',label:'Full Front PPF',sub:'Hood, fenders, bumper & mirrors'},
-    {k:'Clear PPF \u2014 Partial',label:'Partial PPF',sub:'High-impact zones only'}]},
+    {k:'Clear PPF \u2014 Partial',label:'Partial PPF',sub:'High-impact zones only'}],
+    note:'We carry <strong>3M, Avery Dennison & Project X60</strong> films \u2014 book an appointment to browse our full protection film options in person.'},
   {name:'Colored Paint Protection Film',icon:'\ud83c\udfad',desc:'Color-shift protection film',img:'colored-ppf',items:[
     {k:'Colored PPF \u2014 Full Body',label:'Full Body Colored PPF',sub:'Full coverage color PPF'},
-    {k:'Colored PPF \u2014 Full Front',label:'Full Front Colored PPF',sub:'Front-end color PPF'}]},
+    {k:'Colored PPF \u2014 Full Front',label:'Full Front Colored PPF',sub:'Front-end color PPF'}],
+    note:'We carry <strong>3M, Avery Dennison & Project X60</strong> films \u2014 book an appointment to browse our full protection film options in person.'},
   {name:'Window Tinting',icon:'\ud83e\ude9f',desc:'Premium ceramic window tint',img:'tint',items:[
     {k:'Window Tint \u2014 Full Vehicle',label:'Full Vehicle Tint',sub:'All side & rear windows'},
     {k:'Window Tint \u2014 Front Two',label:'Front Two Windows',sub:'Driver & passenger only'},
@@ -969,11 +1178,17 @@ const categories = [
     {k:'PC \u2014 Bolts & Fasteners',label:'Bolts & Fasteners',sub:'Engine bay or chassis bolt set'},
     {k:'PC \u2014 Springs (Set of 4)',label:'Springs (Set of 4)',sub:'Coilover or coil springs'}]},
   {name:'Starlight Headliner',icon:'\u2728',desc:'Fiber-optic star ceiling installation',img:'starlight',items:[
-    {k:'Starlight Headliner',label:'Starlight Headliner',sub:'Custom fiber-optic star ceiling'}]},
+    {k:'Starlight \u2014 800 Stars',label:'800 Stars Package',sub:'Ideal for small coupes & sedans'},
+    {k:'Starlight \u2014 1,100 Stars',label:'1,100 Stars Package',sub:'Perfect for sedans & SUVs'},
+    {k:'Starlight \u2014 2,100 Stars',label:'2,100 Stars Package',sub:'Made for large SUVs & trucks'}]},
   {name:'Detailing',icon:'\ud83d\udc8e',desc:'Interior, exterior & full detail services',img:'detail',items:[
-    {k:'Full Detail',label:'Full Detail',sub:'Complete interior & exterior detail'},
-    {k:'Exterior Detail & Polish',label:'Exterior Detail & Polish',sub:'Wash, clay bar, polish & sealant'},
-    {k:'Interior Detail',label:'Interior Detail',sub:'Deep clean, leather care & steam'}]},
+    {k:'Basic Detail',label:'Basic Detail',sub:'Wash, vacuum, window clean & wipe down'},
+    {k:'Premium Detail',label:'Premium Detail',sub:'Clay bar, wax, deep interior & steam'},
+    {k:'Ultimate Detail',label:'Ultimate Detail',sub:'Full wax, ceramic spray, headlight polish'},
+    {k:'Exterior Express',label:'Exterior Express',sub:'Hand wash, wheel clean, tire shine & dry'},
+    {k:'Exterior Pro',label:'Exterior Pro',sub:'Premium wash, clay bar, polish & wax'},
+    {k:'Interior Deep Clean',label:'Interior Deep Clean',sub:'Deep vacuum, shampoo & dashboard detail'},
+    {k:'Interior Restoration',label:'Interior Restoration',sub:'Steam clean, stain removal & leather treatment'}]},
 ];
 
 // ═══ STATE ═══
@@ -1053,10 +1268,14 @@ function restoreState() {
       payMethod = s.payMethod;
       document.querySelectorAll('.pay-opt').forEach(o => o.classList.remove('active'));
       const payBtns = document.querySelectorAll('.pay-opt');
-      const payMap = { card: 0, apple: 1, paypal: 2 };
+      const payMap = { card: 0, apple: 1, etransfer: 2 };
       if (payBtns[payMap[payMethod]]) payBtns[payMap[payMethod]].classList.add('active');
       const cf = document.getElementById('cardFields');
-      payMethod === 'card' ? cf.classList.add('show') : cf.classList.remove('show');
+      const ef = document.getElementById('etransferInfo');
+      cf.classList.remove('show');
+      ef.classList.remove('show');
+      if (payMethod === 'card') cf.classList.add('show');
+      else if (payMethod === 'etransfer') ef.classList.add('show');
     }
     // Reopen checkout at the same step
     if (s.coStep) {
@@ -1285,6 +1504,7 @@ function renderCategories() {
       };
       const desc = serviceDescriptions[item.k] || '';
       const infoId = 'info-' + item.k.replace(/[^a-zA-Z0-9]/g, '_');
+      const timeEst = serviceTimes[item.k] || '';
       row.innerHTML = `
         <div class="lt">
           <div class="chk"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M11.5 3.5L5.5 10L2.5 7" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
@@ -1294,11 +1514,18 @@ function renderCategories() {
               <span class="info-btn" onclick="toggleInfo(event, '${infoId}')" title="More info">i</span>
             </div>
             <div class="info-desc" id="${infoId}">${desc}</div>
+            <div class="si-time">${timeEst ? clockSVG + timeEst : ''}</div>
           </div>
         </div>
         <div class="pr empty" data-k="${item.k}">Select vehicle</div>`;
       inner.appendChild(row);
     });
+    if (cat.note) {
+      const noteEl = document.createElement('div');
+      noteEl.className = 'color-note';
+      noteEl.innerHTML = cat.note;
+      inner.appendChild(noteEl);
+    }
   });
 }
 
@@ -1458,7 +1685,7 @@ function refreshSummary() {
     ${itemsHtml}
     <div class="os-totals">
       <div class="os-row"><span>Subtotal</span><span class="val">${missing ? '\u2014' : fmtC(sub)}</span></div>
-      <div class="os-row"><span>Tax (8.25%)</span><span class="val">${missing ? '\u2014' : fmtC(tax)}</span></div>
+      <div class="os-row"><span>Tax (5%)</span><span class="val">${missing ? '\u2014' : fmtC(tax)}</span></div>
       <div class="os-divider"></div>
       <div class="os-total-row"><span class="label">Total (incl. Tax)</span><span class="val">${missing ? '\u2014' : fmtC(total)}</span></div>
     </div>
@@ -1529,19 +1756,8 @@ function nextStep(from) {
   if (from === 2) {
     let valid = true;
     clearError('f-date');
-    clearError('f-notes');
     const dateInput = document.getElementById('co-date');
     if (!dateInput.value || !dateInput.dataset.iso || !dateInput.dataset.time) { setError('f-date'); valid = false; }
-    if (!document.getElementById('co-notes').value.trim()) {
-      setError('f-notes');
-      const notesField = document.getElementById('f-notes');
-      notesField.classList.remove('highlight');
-      void notesField.offsetWidth;
-      notesField.classList.add('highlight');
-      notesField.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      setTimeout(() => notesField.classList.remove('highlight'), 2000);
-      valid = false;
-    }
     if (!valid) return;
   }
   if (from === 3) {
@@ -1572,7 +1788,11 @@ function selectPay(el, method) {
   document.querySelectorAll('.pay-opt').forEach(o => o.classList.remove('active'));
   el.classList.add('active');
   const cf = document.getElementById('cardFields');
-  method === 'card' ? cf.classList.add('show') : cf.classList.remove('show');
+  const ef = document.getElementById('etransferInfo');
+  cf.classList.remove('show');
+  ef.classList.remove('show');
+  if (method === 'card') cf.classList.add('show');
+  else if (method === 'etransfer') ef.classList.add('show');
 }
 
 function formatPhone(el) {
@@ -1614,7 +1834,7 @@ function buildReview() {
   const total = sub + tax;
   const dateInput = document.getElementById('co-date');
   const dateDisplay = dateInput.value;
-  const payLabels = {card:'Credit Card',apple:'Apple Pay',paypal:'PayPal'};
+  const payLabels = {card:'Credit Card',apple:'Apple Pay',etransfer:'e-Transfer'};
 
   document.getElementById('reviewContent').innerHTML = `
     <div class="review-block">
@@ -1644,7 +1864,7 @@ function buildReview() {
     </div>
     <div class="review-block" style="border-color:var(--acc)">
       <div class="rb-item"><span class="l">Subtotal</span><span class="v">${fmtC(sub)}</span></div>
-      <div class="rb-item"><span class="l">Tax (8.25%)</span><span class="v">${fmtC(tax)}</span></div>
+      <div class="rb-item"><span class="l">Tax (5%)</span><span class="v">${fmtC(tax)}</span></div>
       <div class="review-total">
         <span class="l">Total</span>
         <span class="v">${fmtC(total)}</span>
@@ -1656,6 +1876,33 @@ function submitOrder() {
   // Generate dummy ref number
   const ref = 'WRP-' + Math.random().toString(36).substring(2,8).toUpperCase();
   document.getElementById('refNum').textContent = 'Reference: ' + ref;
+  document.getElementById('refNum').style.display = '';
+  // Update heading and content based on payment method
+  const heading = document.getElementById('confirmHeading');
+  const confirmText = document.querySelector('.confirm-text p');
+  const etfSection = document.getElementById('confirmEtfSection');
+  if (payMethod === 'etransfer') {
+    heading.textContent = 'Appointment Reserved!';
+    confirmText.innerHTML = 'Your spot is held for <strong>24 hours</strong>. Complete your e-Transfer to confirm:';
+    if (etfSection) {
+      let sub = 0;
+      selected.forEach(k => { const p = getPrice(k); if (p) sub += p; });
+      const total = sub + (sub * TAX);
+      etfSection.style.display = 'block';
+      etfSection.innerHTML = `
+        <div class="etf-steps" style="margin-top:16px">
+          <div class="etf-step"><span class="etf-num">1</span><span>Open your banking app and go to <strong>Interac e-Transfer</strong></span></div>
+          <div class="etf-step"><span class="etf-num">2</span><span>Add recipient email: <strong>wraptorscalgary@gmail.com</strong></span></div>
+          <div class="etf-step"><span class="etf-num">3</span><span>Send <strong>${fmtC(total)}</strong> (your order total)</span></div>
+          <div class="etf-step"><span class="etf-num">4</span><span>Include your <strong>name & reference number</strong> in the message</span></div>
+        </div>
+        <p style="font-size:13px;color:var(--tx2);text-align:center;margin-top:12px;line-height:1.5">Once we receive your e-Transfer, we'll send a confirmation text to verify your booking.</p>`;
+    }
+  } else {
+    heading.textContent = 'Booking Confirmed!';
+    confirmText.innerHTML = 'We\'ve received your appointment request. You\'ll get a confirmation email shortly with all the details.';
+    if (etfSection) etfSection.style.display = 'none';
+  }
   // Show confirmation
   document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
   document.getElementById('panel-confirm').classList.add('active');
@@ -1731,7 +1978,7 @@ function buildCalendarLinks() {
 // ═══ APPOINTMENT PICKER (Calendar + Time) ═══
 let calMonth, calYear, calSelected = null;
 let apptTime = null;
-const availableTimes = ['9:00 AM','9:30 AM','10:00 AM','10:30 AM','11:00 AM','11:30 AM','1:00 PM','1:30 PM','2:00 PM','2:30 PM','3:00 PM','3:30 PM','4:00 PM','4:30 PM'];
+const availableTimes = ['10:00 AM','10:30 AM','11:00 AM','11:30 AM','12:00 PM','12:30 PM','1:00 PM','1:30 PM','2:00 PM','2:30 PM','3:00 PM','3:30 PM','4:00 PM','4:30 PM','5:00 PM','5:30 PM','6:00 PM','6:30 PM','7:00 PM'];
 
 function openApptPicker() {
   const now = new Date();
@@ -1779,10 +2026,11 @@ function renderCal() {
     const date = new Date(calYear, calMonth, d);
     date.setHours(0,0,0,0);
     const isPast = date < today;
+    const isSunday = date.getDay() === 0;
     const isToday = date.getTime() === today.getTime();
     const isSel = calSelected && date.getTime() === calSelected.getTime();
     let cls = 'cal-cell';
-    if (isPast) cls += ' disabled';
+    if (isPast || isSunday) cls += ' disabled';
     if (isToday) cls += ' today';
     if (isSel) cls += ' selected';
     html += `<div class="${cls}" onclick="pickDate(${calYear},${calMonth},${d})">${d}</div>`;
@@ -1852,9 +2100,48 @@ function resetCheckout() {
   payMethod = 'card';
   document.querySelectorAll('.pay-opt').forEach((o,i) => i===0 ? o.classList.add('active') : o.classList.remove('active'));
   document.getElementById('cardFields').classList.add('show');
+  document.getElementById('etransferInfo').classList.remove('show');
+  const etfSection = document.getElementById('confirmEtfSection');
+  if (etfSection) etfSection.style.display = 'none';
   coStep = 1;
   sessionStorage.removeItem('wrp_state');
 }
+
+// ═══ DARK MODE TOGGLE ═══
+function toggleTheme() {
+  document.body.classList.toggle('light-mode');
+  const isLight = document.body.classList.contains('light-mode');
+  localStorage.setItem('wrp_theme', isLight ? 'light' : 'dark');
+  const btn = document.getElementById('themeToggle');
+  btn.innerHTML = isLight
+    ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>'
+    : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"/></svg>';
+}
+
+// Restore theme on load
+(function() {
+  const saved = localStorage.getItem('wrp_theme');
+  if (saved === 'light') {
+    document.body.classList.add('light-mode');
+    const btn = document.getElementById('themeToggle');
+    if (btn) btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>';
+  }
+})();
+
+// ═══ REVIEW ROTATION ═══
+let reviewIndex = 0;
+function rotateReviews() {
+  const cards = document.querySelectorAll('.sr-card');
+  if (cards.length === 0) return;
+  const current = cards[reviewIndex];
+  current.classList.add('exiting');
+  setTimeout(() => {
+    current.classList.remove('active','exiting');
+    reviewIndex = (reviewIndex + 1) % cards.length;
+    cards[reviewIndex].classList.add('active');
+  }, 500);
+}
+setInterval(rotateReviews, 5000);
 </script>
 </body>
 </html>
