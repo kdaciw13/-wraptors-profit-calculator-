@@ -562,6 +562,17 @@
       background:var(--acc);color:#09090b;font-size:11px;font-weight:700;
       display:flex;align-items:center;justify-content:center;margin-top:1px;
     }
+    .etf-urgency{
+      margin-top:14px;padding:12px 14px;
+      background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:var(--rs);
+      font-size:12px;color:#fca5a5;line-height:1.6;
+    }
+    .etf-urgency strong{color:#f87171}
+    .etf-deadline{
+      text-align:center;padding:10px 14px;margin-bottom:14px;
+      background:var(--acc-d);border:1px solid rgba(201,168,76,.2);border-radius:var(--rs);
+      font-size:14px;font-weight:700;color:var(--acc);
+    }
 
     /* ── SERVICE TURNAROUND TIME ── */
     .si-time{font-size:11px;color:var(--acc);display:flex;align-items:center;gap:4px;margin-top:3px;font-weight:600}
@@ -930,8 +941,9 @@
             </div>
           </div>
           <div class="etransfer-info" id="etransferInfo">
-            <p style="margin-bottom:8px"><strong style="color:var(--acc)">Book first, pay to confirm.</strong></p>
-            <p>Your appointment will be held for <strong>24 hours</strong>. After booking, send your e-Transfer to <strong class="etf-highlight">wraptorscalgary@gmail.com</strong> to confirm your spot. We'll verify and send you a confirmation text.</p>
+            <p><span class="etf-highlight">Book first, pay to confirm.</span> After booking, send your e-Transfer at least <strong>2 hours before</strong> your appointment to secure your spot.</p>
+            <p style="margin-top:8px;font-size:12px;color:var(--txm)">e-Transfer to: <span class="etf-highlight">wraptorscalgary@gmail.com</span></p>
+            <p style="margin-top:6px;font-size:11px;color:var(--txm)">Spots are first-come, first-served. If payment isn't received by the deadline, your time slot may be taken.</p>
           </div>
           <div class="co-nav">
             <button class="btn-back" onclick="prevStep(3)">Back</button>
@@ -1759,6 +1771,33 @@ function nextStep(from) {
     const dateInput = document.getElementById('co-date');
     if (!dateInput.value || !dateInput.dataset.iso || !dateInput.dataset.time) { setError('f-date'); valid = false; }
     if (!valid) return;
+    // Check if appointment is within 2 hours — if so, hide e-Transfer
+    const dateEl = document.getElementById('co-date');
+    const apptIso = dateEl.dataset.iso;
+    const apptTimeStr = dateEl.dataset.time;
+    if (apptIso && apptTimeStr) {
+      const [tp, ampm] = apptTimeStr.split(' ');
+      let [h, m] = tp.split(':').map(Number);
+      if (ampm === 'PM' && h !== 12) h += 12;
+      if (ampm === 'AM' && h === 12) h = 0;
+      const apptDate = new Date(apptIso + 'T' + String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0') + ':00');
+      const now = new Date();
+      const hoursUntil = (apptDate - now) / (1000 * 60 * 60);
+      const etfOpt = document.querySelector('.pay-opt.popular');
+      if (hoursUntil < 2) {
+        etfOpt.style.display = 'none';
+        // If e-transfer was selected, switch to card
+        if (payMethod === 'etransfer') {
+          payMethod = 'card';
+          document.querySelectorAll('.pay-opt').forEach(o => o.classList.remove('active'));
+          document.querySelector('.pay-opt').classList.add('active');
+          document.getElementById('cardFields').classList.add('show');
+          document.getElementById('etransferInfo').classList.remove('show');
+        }
+      } else {
+        etfOpt.style.display = '';
+      }
+    }
   }
   if (from === 3) {
     if (payMethod === 'card') {
@@ -1882,21 +1921,44 @@ function submitOrder() {
   const confirmText = document.querySelector('.confirm-text p');
   const etfSection = document.getElementById('confirmEtfSection');
   if (payMethod === 'etransfer') {
+    // Calculate deadline (appointment time minus 2 hours)
+    const dateInput = document.getElementById('co-date');
+    const iso = dateInput.dataset.iso;
+    const timeStr = dateInput.dataset.time;
+    const [timePart, ampm] = timeStr.split(' ');
+    let [hours, mins] = timePart.split(':').map(Number);
+    if (ampm === 'PM' && hours !== 12) hours += 12;
+    if (ampm === 'AM' && hours === 12) hours = 0;
+    const apptDate = new Date(iso + 'T' + String(hours).padStart(2,'0') + ':' + String(mins).padStart(2,'0') + ':00');
+    const deadline = new Date(apptDate.getTime() - 2 * 60 * 60 * 1000);
+    const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    let dh = deadline.getHours();
+    const dam = dh >= 12 ? 'PM' : 'AM';
+    if (dh > 12) dh -= 12;
+    if (dh === 0) dh = 12;
+    const deadlineStr = dayNames[deadline.getDay()] + ', ' + monthNames[deadline.getMonth()] + ' ' + deadline.getDate() + ' at ' + dh + ':' + String(deadline.getMinutes()).padStart(2,'0') + ' ' + dam;
+
+    // Calculate total
+    let etfTotal = 0;
+    selected.forEach(k => { const p = getPrice(k); if (p) etfTotal += p; });
+    const etfTax = etfTotal * TAX;
+    const etfGrand = etfTotal + etfTax;
+
     heading.textContent = 'Appointment Reserved!';
-    confirmText.innerHTML = 'Your spot is held for <strong>24 hours</strong>. Complete your e-Transfer to confirm:';
+    confirmText.innerHTML = 'Your spot is held until <strong>' + deadlineStr + '</strong>. Send your e-Transfer to confirm:';
     if (etfSection) {
-      let sub = 0;
-      selected.forEach(k => { const p = getPrice(k); if (p) sub += p; });
-      const total = sub + (sub * TAX);
       etfSection.style.display = 'block';
       etfSection.innerHTML = `
-        <div class="etf-steps" style="margin-top:16px">
-          <div class="etf-step"><span class="etf-num">1</span><span>Open your banking app and go to <strong>Interac e-Transfer</strong></span></div>
-          <div class="etf-step"><span class="etf-num">2</span><span>Add recipient email: <strong>wraptorscalgary@gmail.com</strong></span></div>
-          <div class="etf-step"><span class="etf-num">3</span><span>Send <strong>${fmtC(total)}</strong> (your order total)</span></div>
-          <div class="etf-step"><span class="etf-num">4</span><span>Include your <strong>name & reference number</strong> in the message</span></div>
+        <div class="etf-deadline">Payment deadline: ${deadlineStr}</div>
+        <div class="etf-steps">
+          <div class="etf-step"><span class="etf-num">1</span><span>Open your banking app &rarr; <strong>Interac e-Transfer</strong></span></div>
+          <div class="etf-step"><span class="etf-num">2</span><span>Recipient: <strong>wraptorscalgary@gmail.com</strong></span></div>
+          <div class="etf-step"><span class="etf-num">3</span><span>Amount: <strong>${fmtC(etfGrand)}</strong></span></div>
+          <div class="etf-step"><span class="etf-num">4</span><span>Send and you're locked in!</span></div>
         </div>
-        <p style="font-size:13px;color:var(--tx2);text-align:center;margin-top:12px;line-height:1.5">Once we receive your e-Transfer, we'll send a confirmation text to verify your booking.</p>`;
+        <div class="etf-urgency"><strong>&#9888; Spots are first-come, first-served</strong> &mdash; if we don't receive your payment by <strong>${deadlineStr}</strong>, your time slot will be released to the next customer.</div>
+        <p style="font-size:13px;color:var(--tx2);text-align:center;margin-top:12px;line-height:1.5">Once we receive your e-Transfer, we'll text you a confirmation.</p>`;
     }
   } else {
     heading.textContent = 'Booking Confirmed!';
