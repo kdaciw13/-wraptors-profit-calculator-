@@ -633,13 +633,16 @@
     .theme-toggle:hover{border-color:var(--acc);color:var(--acc)}
 
     .back-btn{
-      display:inline-flex;align-items:center;gap:5px;
-      padding:6px 14px;border-radius:100px;margin-bottom:14px;
-      background:var(--sf2);border:1px solid var(--bdr);
-      color:var(--txm);font-family:inherit;font-size:11px;font-weight:600;
+      position:fixed;top:16px;left:16px;z-index:500;
+      display:flex;align-items:center;gap:5px;
+      padding:7px 12px 7px 10px;border-radius:100px;
+      background:var(--sf);border:1px solid var(--bdr);
+      color:var(--acc);font-family:inherit;font-size:11px;font-weight:700;
       text-decoration:none;cursor:pointer;transition:all .2s;
+      box-shadow:0 2px 8px rgba(0,0,0,.3);
     }
-    .back-btn:hover{border-color:var(--acc);color:var(--acc)}
+    .back-btn svg{color:var(--acc)}
+    .back-btn:hover{border-color:var(--acc);background:var(--acc-d);box-shadow:0 2px 12px rgba(0,0,0,.4)}
 
     body.light-mode{
       --bg:#f8f8fa;--sf:#ffffff;--sf2:#f0f0f2;--sf3:#e8e8ec;
@@ -698,12 +701,13 @@
 
 <div class="page-wrap">
 
+  <a class="back-btn" href="#" id="backToSite" title="Back to website">
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M10 2L4 8l6 6"/></svg>
+    <span>Back</span>
+  </a>
+
   <!-- HEADER (full width above columns) -->
   <div class="hdr fi">
-    <a class="back-btn" href="#" id="backToSite" title="Back to website">
-      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 2L4 8l6 6"/></svg>
-      <span>Back to Website</span>
-    </a>
     <img src="logo.jpg" alt="Wraptors" class="hdr-logo" />
     <h1>What's My Wrap Cost?</h1>
     <p class="hdr-sub">Build your custom quote — wraps, PPF, tint, detailing &amp; more</p>
