@@ -2224,6 +2224,14 @@ function rotateReviews() {
   }, 500);
 }
 setInterval(rotateReviews, 5000);
+
+// ═══ EXIT WARNING ═══
+window.addEventListener('beforeunload', function(e) {
+  if (selected.size > 0 || document.getElementById('checkoutModal').classList.contains('open')) {
+    e.preventDefault();
+    e.returnValue = '';
+  }
+});
 </script>
 </body>
 </html>
