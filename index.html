@@ -563,16 +563,27 @@
       display:flex;align-items:center;justify-content:center;margin-top:1px;
     }
     .etf-urgency{
-      margin-top:14px;padding:12px 14px;
-      background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:var(--rs);
-      font-size:12px;color:#fca5a5;line-height:1.6;
+      margin-top:12px;padding:14px 16px;
+      background:var(--sf2);border:1px solid var(--bdr);border-radius:var(--rs);
+      font-size:12px;color:var(--tx2);line-height:1.7;
     }
-    .etf-urgency strong{color:#f87171}
+    .etf-urgency strong{color:var(--tx);font-weight:700}
     .etf-deadline{
-      text-align:center;padding:10px 14px;margin-bottom:14px;
-      background:var(--acc-d);border:1px solid rgba(201,168,76,.2);border-radius:var(--rs);
-      font-size:14px;font-weight:700;color:var(--acc);
+      text-align:center;padding:14px 16px;margin-top:16px;
+      background:var(--acc-d);border:1px solid rgba(201,168,76,.25);border-radius:var(--rs);
     }
+    .etf-deadline .dl-label{font-size:11px;color:var(--txm);text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:4px}
+    .etf-deadline .dl-time{font-size:18px;font-weight:900;color:var(--acc)}
+    .etf-gold-ul{
+      color:var(--acc);font-weight:800;white-space:nowrap;
+      border-bottom:2px solid var(--acc);padding-bottom:1px;
+    }
+    .etf-ref{
+      text-align:center;margin-top:14px;padding:10px 14px;
+      background:var(--sf2);border:1px solid var(--bdr);border-radius:var(--rs);
+    }
+    .etf-ref .ref-code{font-size:15px;font-weight:800;color:var(--acc);letter-spacing:1px}
+    .etf-ref .ref-hint{font-size:11px;color:var(--txm);margin-top:3px}
 
     /* ── SERVICE TURNAROUND TIME ── */
     .si-time{font-size:11px;color:var(--acc);display:flex;align-items:center;gap:4px;margin-top:3px;font-weight:600}
@@ -941,9 +952,9 @@
             </div>
           </div>
           <div class="etransfer-info" id="etransferInfo">
-            <p><span class="etf-highlight">Book first, pay to confirm.</span> After booking, send your e-Transfer at least <strong>2 hours before</strong> your appointment to secure your spot.</p>
+            <p><span class="etf-highlight">Book first, pay to confirm.</span> After booking, send your e-Transfer at least <span class="etf-gold-ul">2 hours</span> before your appointment to secure your spot.</p>
             <p style="margin-top:8px;font-size:12px;color:var(--txm)">e-Transfer to: <span class="etf-highlight">wraptorscalgary@gmail.com</span></p>
-            <p style="margin-top:6px;font-size:11px;color:var(--txm)">Spots are first-come, first-served. If payment isn't received by the deadline, your time slot may be taken.</p>
+            <p style="margin-top:6px;font-size:11px;color:var(--txm)">Spots are first-come, first-served. If payment isn't received by the deadline, your time slot may be released.</p>
           </div>
           <div class="co-nav">
             <button class="btn-back" onclick="prevStep(3)">Back</button>
@@ -1914,8 +1925,9 @@ function buildReview() {
 function submitOrder() {
   // Generate dummy ref number
   const ref = 'WRP-' + Math.random().toString(36).substring(2,8).toUpperCase();
-  document.getElementById('refNum').textContent = 'Reference: ' + ref;
-  document.getElementById('refNum').style.display = '';
+  const refEl = document.getElementById('refNum');
+  refEl.textContent = 'Reference: ' + ref + ' — mention this when you arrive';
+  refEl.style.display = '';
   // Update heading and content based on payment method
   const heading = document.getElementById('confirmHeading');
   const confirmText = document.querySelector('.confirm-text p');
@@ -1947,18 +1959,26 @@ function submitOrder() {
 
     heading.textContent = 'Appointment Reserved!';
     confirmText.innerHTML = 'Your spot is held until <strong>' + deadlineStr + '</strong>. Send your e-Transfer to confirm:';
+    document.getElementById('refNum').style.display = 'none';
     if (etfSection) {
       etfSection.style.display = 'block';
       etfSection.innerHTML = `
-        <div class="etf-deadline">Payment deadline: ${deadlineStr}</div>
         <div class="etf-steps">
           <div class="etf-step"><span class="etf-num">1</span><span>Open your banking app &rarr; <strong>Interac e-Transfer</strong></span></div>
           <div class="etf-step"><span class="etf-num">2</span><span>Recipient: <strong>wraptorscalgary@gmail.com</strong></span></div>
-          <div class="etf-step"><span class="etf-num">3</span><span>Amount: <strong>${fmtC(etfGrand)}</strong></span></div>
-          <div class="etf-step"><span class="etf-num">4</span><span>Send and you're locked in!</span></div>
+          <div class="etf-step"><span class="etf-num">3</span><span>Amount: <strong>${fmtC(etfGrand)}</strong> (incl. 5% GST)</span></div>
+          <div class="etf-step"><span class="etf-num">4</span><span>Send and you're <strong>locked in!</strong></span></div>
         </div>
-        <div class="etf-urgency"><strong>&#9888; Spots are first-come, first-served</strong> &mdash; if we don't receive your payment by <strong>${deadlineStr}</strong>, your time slot will be released to the next customer.</div>
-        <p style="font-size:13px;color:var(--tx2);text-align:center;margin-top:12px;line-height:1.5">Once we receive your e-Transfer, we'll text you a confirmation.</p>`;
+        <div class="etf-deadline">
+          <div class="dl-label">Payment Deadline</div>
+          <div class="dl-time">${deadlineStr}</div>
+        </div>
+        <div class="etf-urgency">Spots are <strong>first-come, first-served</strong>. If we don't receive your payment by ${deadlineStr}, your time slot will be released to the next customer in line.</div>
+        <div class="etf-ref">
+          <div class="ref-code">${ref}</div>
+          <div class="ref-hint">Mention this reference number when you arrive</div>
+        </div>
+        <p style="font-size:13px;color:var(--tx2);text-align:center;margin-top:14px;line-height:1.5">Once we receive your e-Transfer, we'll text you a confirmation.</p>`;
     }
   } else {
     heading.textContent = 'Booking Confirmed!';
